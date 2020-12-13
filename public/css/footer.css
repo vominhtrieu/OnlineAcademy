@@ -1,0 +1,13 @@
+footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: white;
+  padding: 0;
+}
+
+footer > hr {
+  margin-top: 0;
+}

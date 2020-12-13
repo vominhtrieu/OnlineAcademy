@@ -1,0 +1,14 @@
+<div class="card shadow border-0">
+  <img class="card-img-top" src="<%= course.img %>" alt="Card image cap" />
+  <div class="card-body">
+    <h5 class="card-title"><%= course.name %></h5>
+    <h6 class="card-subtitle mb-1">Võ Minh Triều</h6>
+    <h6 class="card-text">200.000 VNĐ</h6>
+    <div class="rating-bar">
+      <% for (let i = 0; i < 5; i++) { %>
+        <span class="fa fa-star <%= i < course.rating? "checked" : "" %>"></span>
+      <% } %>
+      <span>(100) </span>
+    </div>
+  </div>
+</div>

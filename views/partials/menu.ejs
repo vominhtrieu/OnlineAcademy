@@ -1,0 +1,17 @@
+<ul
+  class="dropdown-menu mt-3 shadow rounded"
+  aria-labelledby="navbarDropdown"
+  id="upper-level-categories"
+>
+    <% categories.forEach(category => { %>
+        <li>
+            <a class="dropdown-item py-1" href="#"><%= category.name %></a>
+            <ul class="submenu dropdown-menu">
+
+                <% category.lowerLevelCategories.forEach((category) => { %>
+                    <li><a class="dropdown-item py-1"><%= category.name %></a></li>
+                <% }); %>
+            </ul>
+        </li>
+    <% }); %>
+</ul>

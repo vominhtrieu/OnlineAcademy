@@ -10,15 +10,16 @@ body {
 }
 
 .carousel-item {
-  height: 500px;
+  height: 360px;
+  height: 640px;
 }
 
 .carousel-item > img {
   position: absolute;
   top: 0;
   left: 0;
-  min-height: 500px;
-  object-fit: cover;
+  width: 100%;
+  object-fit: fill;
   object-position: center;
 }
 

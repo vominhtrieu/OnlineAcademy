@@ -18,22 +18,7 @@ mongoose.connect(process.env.DB_HOST, {
   useCreateIndex: true,
 });
 
-passport.use(
-  new PassportLocal.Strategy((email, password, done) => {
-    User.findOne({ email: email }, (err, user) => {
-      if (err) {
-        return done(err);
-      }
-      if (!user) {
-        return done(null, false);
-      }
-      if (!user.verifyPassword(password)) {
-        return done(null, false);
-      }
-      return done(null, user);
-    });
-  })
-);
+passport.use(User.createStrategy());
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -50,7 +35,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new PassportLocal(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 

@@ -9,11 +9,12 @@ router.get('/signup', authenticationController.getSignUpView);
 router.post(
   '/signin',
   passport.authenticate('local', {
-    successRedirect: '/',
     failureRedirect: '/signin',
+    failureFlash: 'Tên đăng nhập hoặc mật khẩu không đúng',
   }),
   authenticationController.signIn
 );
 router.post('/signup', authenticationController.signUp);
+router.post('/signout', authenticationController.signOut);
 
 module.exports = router;

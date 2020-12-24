@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const passport = require('passport');
-const PassportLocal = require('passport-local');
+const flash = require('connect-flash');
 const expressSession = require('express-session');
 
 const bodyParser = require('body-parser');
@@ -32,6 +32,7 @@ app.use(
   })
 );
 
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -46,6 +47,7 @@ app.use(require('./middlewares/categories'));
 
 app.use('/', require('./routes/home'));
 app.use('/', require('./routes/authentication'));
+app.use('/', require('./routes/activation'));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

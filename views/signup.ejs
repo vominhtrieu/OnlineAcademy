@@ -1,51 +1,82 @@
-<%- include("partials/header") %>
-  <%- include("partials/navbar") %>
+<%- include("partials/header") %> <%- include("partials/navbar") %>
 
-    <link rel="stylesheet" href="css/auth.css" />
+<link rel="stylesheet" href="css/auth.css" />
 
-    <div id="authContainer" class="container mt-5">
-      <form class="form-group" method="POST" action="/signup">
-        <label for="email">Email</label>
-        <input type="text" name="email" id="email" class="form-control" aria-describedby="helpId" />
-        <label for="fullName">Họ tên</label>
-        <input type="text" name="fullName" id="fullName" class="form-control" aria-describedby="helpId" />
-        <label for="password">Mật khẩu</label>
-        <input type="password" name="password" id="password" class="form-control" aria-describedby="helpId" />
+<div id="authContainer" class="container mt-5">
+  <% if (message.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= message %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+  <form class="form-group" method="POST" action="/signup">
+    <label for="email">Email</label>
+    <input
+      type="text"
+      name="email"
+      id="email"
+      class="form-control"
+      aria-describedby="helpId"
+    />
+    <label for="fullName">Họ tên</label>
+    <input
+      type="text"
+      name="fullName"
+      id="fullName"
+      class="form-control"
+      aria-describedby="helpId"
+    />
+    <label for="password">Mật khẩu</label>
+    <input
+      type="password"
+      name="password"
+      id="password"
+      class="form-control"
+      aria-describedby="helpId"
+    />
 
-        <button id="submit-btn" class="btn btn-primary mt-2">Đăng ký</button>
-      </form>
+    <button id="submit-btn" class="btn btn-primary mt-2">Đăng ký</button>
+  </form>
 
-      <p class="text-center my-2">hoặc</p>
+  <p class="text-center my-2">hoặc</p>
 
-      <div class="g-signin2" data-width="370" data-longtitle="true" data-onsuccess="onSignIn" data-theme="dark"></div>
-    </div>
+  <div
+    class="g-signin2"
+    data-width="370"
+    data-longtitle="true"
+    data-onsuccess="onSignIn"
+    data-theme="dark"
+  ></div>
+</div>
 
-    <script>
-      function onSignIn(googleUser) {
-        // Useful data for your client-side scripts:
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Don't send this directly to your server!
-        console.log('Full Name: ' + profile.getName());
-        console.log('Given Name: ' + profile.getGivenName());
-        console.log('Family Name: ' + profile.getFamilyName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail());
+<script>
+  function onSignIn(googleUser) {
+    // Useful data for your client-side scripts:
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Don't send this directly to your server!
+    console.log('Full Name: ' + profile.getName());
+    console.log('Given Name: ' + profile.getGivenName());
+    console.log('Family Name: ' + profile.getFamilyName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail());
 
-        // The ID token you need to pass to your backend:
-        var id_token = googleUser.getAuthResponse().id_token;
-        console.log('ID Token: ' + id_token);
-      }
+    // The ID token you need to pass to your backend:
+    var id_token = googleUser.getAuthResponse().id_token;
+    console.log('ID Token: ' + id_token);
+  }
 
-      function renderButton() {
-        gapi.signin2.render('my-signin2', {
-          scope: 'profile email',
-          width: 500,
-          height: 50,
-          longtitle: true,
-          theme: 'dark',
-          onsuccess: onSuccess,
-          onfailure: onFailure,
-        });
-      }
-    </script>
-    <%- include("partials/footer") %>
+  function renderButton() {
+    gapi.signin2.render('my-signin2', {
+      scope: 'profile email',
+      width: 500,
+      height: 50,
+      longtitle: true,
+      theme: 'dark',
+      onsuccess: onSuccess,
+      onfailure: onFailure,
+    });
+  }
+</script>
+<%- include("partials/footer") %>

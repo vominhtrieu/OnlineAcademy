@@ -9,8 +9,12 @@ const schema = new mongoose.Schema({
   password: String,
   fullName: String,
   type: Number,
+  active: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-schema.plugin(passportLocalMongoose, { usernameField : 'email' });
+schema.plugin(passportLocalMongoose, { usernameField: 'email' });
 
 module.exports = mongoose.model('User', schema);

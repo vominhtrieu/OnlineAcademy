@@ -45,9 +45,11 @@ app.use((req, res, next) => {
 });
 app.use(require('./middlewares/categories'));
 
-app.use('/', require('./routes/home'));
+app.use('/', require('./routes/studentHome'));
 app.use('/', require('./routes/authentication'));
 app.use('/', require('./routes/activation'));
+app.use('/admin', require('./routes/admin'));
+app.use('/about', require('./routes/about'));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

@@ -1,3 +1,3 @@
 exports.getHomeView = (_req, res) => {
-  res.render('home');
+  res.render('student/home');
 };

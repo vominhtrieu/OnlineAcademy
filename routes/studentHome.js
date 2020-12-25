@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const homeController = require('../controller/home');
+const homeController = require('../controller/studentHome');
 
 router.get('/', homeController.getHomeView);
 

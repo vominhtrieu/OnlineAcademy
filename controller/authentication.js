@@ -26,13 +26,24 @@ exports.signIn = (req, res) => {
     req.logout();
     res.redirect('/need-active');
   } else {
-    res.redirect('/');
+    switch (req.user.role) {
+      case 'student':
+        res.redirect('/');
+        break;
+      case 'admin':
+        res.redirect('/admin');
+        break;
+    }
   }
 };
 
 exports.signUp = (req, res) => {
   User.register(
-    new User({ email: req.body.email, fullName: req.body.fullName }),
+    new User({
+      email: req.body.email,
+      fullName: req.body.fullName,
+      role: 'student',
+    }),
     req.body.password,
     (err, user) => {
       if (err) {
@@ -50,6 +61,7 @@ exports.signUp = (req, res) => {
               document._id
             ),
           };
+
           transporter.sendMail(mailOptions, (err, info) => {
             if (err) {
               console.log(err);

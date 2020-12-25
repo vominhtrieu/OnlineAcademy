@@ -1,8 +1,36 @@
-#authContainer {
-  width: 100%;
-  max-width: 400px;
+#auth-container {
+  max-width: 450px;
 }
 
 #submit-btn {
   width: 100%;
+}
+
+img {
+  display: flex;
+  align-items: center;
+}
+
+.input-group-text {
+  width: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.or-container {
+  align-items: center;
+  display: flex;
+  margin: 25px 0;
+}
+
+.line-separator {
+  background-color: rgba(0, 0, 0, 0.1);
+  flex-grow: 5;
+  height: 0.5px;
+}
+
+.or-label {
+  flex-grow: 1;
+  margin: 0 15px;
+  text-align: center;
 }

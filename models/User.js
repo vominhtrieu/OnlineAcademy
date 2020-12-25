@@ -8,7 +8,7 @@ const schema = new mongoose.Schema({
   },
   password: String,
   fullName: String,
-  type: Number,
+  role: String,
   active: {
     type: Boolean,
     default: false,

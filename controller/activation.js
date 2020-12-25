@@ -26,5 +26,5 @@ exports.activeAccount = (req, res) => {
 };
 
 exports.getNeedActiveView = (req, res) => {
-  res.render('needActive', { email: req.flash('email') });
+  res.render('student/needActive', { email: req.flash('email') });
 };

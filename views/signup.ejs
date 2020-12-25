@@ -1,54 +1,123 @@
-<%- include("partials/header") %> <%- include("partials/navbar") %>
+<%- include("student/partials/header") %> <%- include("student/partials/navbar")
+%>
 
 <link rel="stylesheet" href="css/auth.css" />
 
-<div id="authContainer" class="container mt-5">
-  <% if (message.length > 0) { %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= message %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
+<div class="container mt-5">
+  <div class="card shadow-sm border-0">
+    <div class="row">
+      <div class="col-md-6 col-xs-12">
+        <img class="w-100" src="assets/learning2.svg" />
+      </div>
+
+      <div class="col-md-6 col-xs-12">
+        <div id="auth-container" class="mx-auto">
+          <div class="card-body">
+            <h4 class="card-title text-center mb-4 mt-1">Đăng ký</h4>
+            <hr />
+            <% if (message.length > 0) { %>
+            <div
+              class="alert alert-primary alert-dismissible fade show"
+              role="alert"
+            >
+              <%= message %>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="alert"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <% } %>
+            <form class="form-group mt-4" method="POST" action="/signup">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fa fa-envelope"></i
+                  ></span>
+                </div>
+                <input
+                  type="text"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
+              </div>
+
+              <div class="input-group my-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fa fa-user"></i
+                  ></span>
+                </div>
+                <input
+                  type="text"
+                  name="fullName"
+                  id="full-name"
+                  placeholder="Họ và tên"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
+              </div>
+
+              <div class="input-group my-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fa fa-lock"></i
+                  ></span>
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Mật khẩu"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
+              </div>
+
+              <div class="input-group my-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"
+                    ><i class="fa fa-lock"></i
+                  ></span>
+                </div>
+                <input
+                  type="password"
+                  id="retype-password"
+                  placeholder="Nhập lại mật khẩu"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
+              </div>
+
+              <button id="submit-btn" class="btn btn-primary mt-2">
+                Đăng ký
+              </button>
+            </form>
+
+            <div class="or-container border-0">
+              <div class="line-separator"></div>
+              <div class="or-label">hoặc</div>
+              <div class="line-separator"></div>
+            </div>
+
+            <div
+              class="g-signin2"
+              data-width="370"
+              data-longtitle="true"
+              data-onsuccess="onSignIn"
+              data-theme="dark"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <% } %>
-  <form class="form-group" method="POST" action="/signup">
-    <label for="email">Email</label>
-    <input
-      type="text"
-      name="email"
-      id="email"
-      class="form-control"
-      aria-describedby="helpId"
-    />
-    <label for="fullName">Họ tên</label>
-    <input
-      type="text"
-      name="fullName"
-      id="fullName"
-      class="form-control"
-      aria-describedby="helpId"
-    />
-    <label for="password">Mật khẩu</label>
-    <input
-      type="password"
-      name="password"
-      id="password"
-      class="form-control"
-      aria-describedby="helpId"
-    />
-
-    <button id="submit-btn" class="btn btn-primary mt-2">Đăng ký</button>
-  </form>
-
-  <p class="text-center my-2">hoặc</p>
-
-  <div
-    class="g-signin2"
-    data-width="370"
-    data-longtitle="true"
-    data-onsuccess="onSignIn"
-    data-theme="dark"
-  ></div>
 </div>
 
 <script>
@@ -79,4 +148,4 @@
     });
   }
 </script>
-<%- include("partials/footer") %>
+<%- include("student/partials/footer") %>

@@ -1,13 +1,14 @@
-const UpperLevelCategory = require("../models/UpperLevelCategory");
+const MainCategory = require('../models/MainCategory');
 
 module.exports = (req, res, next) => {
-    UpperLevelCategory.find({}).populate("lowerLevelCategories").exec((err, categories) => {
-        if (err){
-            res.send("Err: " + err);
-        }
-        else {
-            res.locals.categories = categories;
-            next();
-        }
-    })
-}
+  MainCategory.find({})
+    .populate('lowerLevelCategories')
+    .exec((err, categories) => {
+      if (err) {
+        res.send('Err: ' + err);
+      } else {
+        res.locals.categories = categories;
+        next();
+      }
+    });
+};

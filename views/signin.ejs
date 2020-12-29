@@ -1,5 +1,4 @@
-<%- include("student/partials/header") %> <%- include("student/partials/navbar")
-%>
+<%- include("partials/header", {title: "Đăng nhập"}) %> <%-include("partials/navbar") %>
 
 <link rel="stylesheet" href="css/auth.css" />
 
@@ -16,17 +15,9 @@
             <h4 class="card-title text-center mb-4 mt-1">Đăng nhập</h4>
             <hr />
             <% if (message.length > 0) { %>
-            <div
-              class="alert alert-primary alert-dismissible fade show"
-              role="alert"
-            >
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
               <%= message %>
-              <button
-                type="button"
-                class="close"
-                data-dismiss="alert"
-                aria-label="Close"
-              >
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
@@ -34,38 +25,18 @@
             <form class="form-group mt-4" method="POST" action="/signin">
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <span class="input-group-text"
-                    ><i class="fa fa-user"></i
-                  ></span>
+                  <span class="input-group-text"><i class="fa fa-user"></i></span>
                 </div>
-                <input
-                  type="text"
-                  name="email"
-                  id="email"
-                  placeholder="Email"
-                  class="form-control"
-                  aria-describedby="helpId"
-                />
+                <input type="text" name="email" id="email" placeholder="Email" class="form-control" aria-describedby="helpId" />
               </div>
               <div class="input-group my-3">
                 <div class="input-group-prepend">
-                  <span class="input-group-text"
-                    ><i class="fa fa-lock"></i
-                  ></span>
+                  <span class="input-group-text"><i class="fa fa-lock"></i></span>
                 </div>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="Password"
-                  class="form-control"
-                  aria-describedby="helpId"
-                />
+                <input type="password" name="password" id="password" placeholder="Password" class="form-control" aria-describedby="helpId" />
               </div>
 
-              <button id="submit-btn" class="btn btn-primary mt-2">
-                Đăng nhập
-              </button>
+              <button id="submit-btn" class="btn btn-primary mt-2">Đăng nhập</button>
               <p class="text-center text-primary mt-2">
                 <a href="#">Quên mật khẩu</a>
               </p>
@@ -77,13 +48,7 @@
               <div class="line-separator"></div>
             </div>
 
-            <div
-              class="g-signin2"
-              data-width="370"
-              data-longtitle="true"
-              data-onsuccess="onSignIn"
-              data-theme="dark"
-            ></div>
+            <div class="g-signin2" data-width="370" data-longtitle="true" data-onsuccess="onSignIn" data-theme="dark"></div>
           </div>
         </div>
       </div>
@@ -119,4 +84,4 @@
     });
   }
 </script>
-<%- include("student/partials/footer") %>
+<%- include("partials/footer") %>

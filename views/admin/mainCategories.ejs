@@ -1,0 +1,154 @@
+<%- include("../partials/header", {title: "Lĩnh vực chính" }) %> <%-include("../partials/navbar") %>
+<link rel="stylesheet" href="/css/categories.css" />
+
+<div class="modal fade" id="add-category-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form method="POST" action="/admin/categories">
+        <div class="modal-header">
+          <h5 class="modal-title">Thêm lĩnh vực mới</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input class="form-control" type="text" name="categoryName" placeholder="Tên lĩnh vực" required />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="edit-category-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <form id="editForm" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Sửa nội dung lĩnh vực</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input class="form-control" type="text" name="categoryName" placeholder="Tên lĩnh vực" required />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Chỉnh sửa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="delete-category-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <!-- Action is set via javascript -->
+      <form id="deleteForm" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Xác nhận xóa</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">Bạn có chắc muốn xóa lĩnh vực này</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xác nhận</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4">
+  <% if (error.length> 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length> 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-header py-2 bg-primary text-white d-flex align-items-center">
+      <div class="d-flex align-items-center">
+        <a href="/admin" class="btn btn-primary mr-1">
+          <i class="fas fa-chevron-left fa-lg fa-lg mr-2"></i>
+        </a>
+        Danh sách lĩnh vực chính
+      </div>
+      <div class="ml-auto">
+        <a class="btn btn-primary" data-toggle="modal" data-target="#add-category-modal">
+          <i class="fas fa-plus fa-lg mr-1"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="d-flex row py-3 table-header w-100 ml-0">
+      <span class="col-1 text-center font-weight-bold">#</span>
+      <span class="col-sm-6 col-5 font-weight-bold">Tên</span>
+      <span class="col-2 text-nowrap overflow-hidden text-center font-weight-bold">Lĩnh vực con</span>
+      <span class="col-3 text-nowrap overflow-hidden text-center font-weight-bold">Thao tác</span>
+    </div>
+
+    <% categories.forEach((category, index)=> { %>
+    <div id="<%=category._id%>" class="d-flex row py-2 border-bottom ml-0 w-100">
+      <span class="col-1 text-center d-flex align-items-center justify-content-center font-weight-bold"><%= index + 1 %></span>
+      <span class="col-sm-6 col-5 d-flex align-items-center"> <a href="/admin/categories/<%=category._id%>"><%= category.name %></a></span>
+      <span class="col-2 text-center d-flex align-items-center justify-content-center"><%= category.subCategories.length %></span>
+      <span class="action-container" class="col-sm-3 col-4 text-center">
+        <button
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#edit-category-modal"
+          data-category-id="<%= category._id %>"
+          onclick="setActionForEditForm(this)"
+        >
+          <span class="fas fa-edit"></span>
+        </button>
+        <button
+          class="btn btn-danger"
+          data-toggle="modal"
+          data-target="#delete-category-modal"
+          data-category-id="<%= category._id %>"
+          onclick="setActionForDeleteForm(this)"
+        >
+          <span class="fas fa-trash"></span>
+        </button>
+      </span>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  const editForm = document.getElementById('editForm');
+  const deleteForm = document.getElementById('deleteForm');
+
+  function setActionForEditForm(button) {
+    const id = button.dataset.categoryId;
+    editForm.action = `/admin/categories/${id}?_method=PUT`;
+    const element = document.getElementById(id);
+    editForm.categoryName.value = element.children[1].textContent;
+  }
+
+  function setActionForDeleteForm(button) {
+    deleteForm.action = `/admin/categories/${button.dataset.categoryId}?_method=DELETE`;
+  }
+</script>
+
+<%- include("../partials/footer") %>

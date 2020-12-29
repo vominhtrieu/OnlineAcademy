@@ -1,12 +1,20 @@
+body {
+  padding-top: 50px;
+  padding-bottom: 180px;
+}
+
 .container {
   width: 100%;
   margin: auto;
 }
 
+.table {
+  margin-bottom: 0;
+}
+
 .dropdown-menu {
   background-color: white;
   border: none;
-  width: 300px;
 }
 
 .dropdown-item:hover {
@@ -55,7 +63,6 @@
     margin-top: 5px;
     width: 100%;
   }
-
 }
 .dropdown-menu .dropdown-toggle:after {
   border-top: 0.3em solid transparent;
@@ -81,4 +88,10 @@
 
 .dropdown-menu > li:hover > .submenu {
   display: block;
+}
+
+.btn-link:focus,
+.btn-link:active {
+  outline: none !important;
+  box-shadow: none !important;
 }

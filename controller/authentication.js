@@ -26,6 +26,7 @@ exports.signIn = (req, res) => {
     req.logout();
     res.redirect('/need-active');
   } else {
+    res.locals.currentUser = req.user;
     switch (req.user.role) {
       case 'student':
         res.redirect('/');

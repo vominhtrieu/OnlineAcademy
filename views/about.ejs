@@ -1,11 +1,36 @@
-<%- include("student/partials/header") %> <%- include("student/partials/navbar")
-%>
-<p>Các ảnh được cung cấp bởi Freepik:</p>
-<ul>
-  <li>
-    <a href="https://www.freepik.com/vectors/education"
-      >Education vector created by stories - www.freepik.com</a
-    >
-  </li>
-</ul>
-<%- include("student/partials/footer") %>
+<%- include("partials/header", {title: "Về chúng tôi"}) %> <%-include("partials/navbar") %>
+<link rel="stylesheet" href="css/about.css" />
+<div class="container mt-3">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5>Tác giả</h5>
+      <p>
+        <b>Họ tên:</b> Võ Minh Triều<br />
+        <b>Email:</b> minhtrieuvo600@gmail.com<br />
+        <b>MSSV:</b> 18120615
+      </p>
+      <h5>Các ảnh được cung cấp bởi Freepik:</h5>
+      <ul class="list-unstyled">
+        <li>
+          <a class="text-dark" href="https://www.freepik.com/vectors/education">Education vector created by stories - www.freepik.com </a>
+        </li>
+        <li>
+          <a class="text-dark" href="https://www.freepik.com/vectors/school">School vector created by pch.vector - www.freepik.com</a>
+        </li>
+        <li>
+          <a class="text-dark" href="https://www.freepik.com/vectors/idea">Idea vector created by stories - www.freepik.com</a>
+        </li>
+        <li>
+          <a class="text-dark" href="https://www.freepik.com/vectors/music">Music vector created by vectorjuice - www.freepik.com</a>
+        </li>
+        <li>
+          <a class="text-dark" href="https://www.freepik.com/vectors/school">School vector created by pch.vector - www.freepik.com</a>
+        </li>
+        <li>
+          <a class="text-dark" href="https://www.freepik.com/vectors/business">Business vector created by rawpixel.com - www.freepik.com</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<%- include("partials/footer") %>

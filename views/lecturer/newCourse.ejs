@@ -1,0 +1,124 @@
+<%- include("../partials/header", {title: "Thêm khóa học", css: ["newCourse"]}) %> <%-include("../partials/navbar") %>
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+</div>
+
+<div class="container mt-2">
+  <div class="card rounded border-0 shadow-sm">
+    <div class="card-header bg-primary">
+      <h5 class="text-white m-0">Thêm khóa học mới</h5>
+    </div>
+    <div class="card-body">
+      <form id="main-form" action="/lecturer/course" method="POST" enctype="multipart/form-data">
+        <input class="form-control mb-2" type="text" name="name" placeholder="Tên khóa học" required />
+        <div class="auto-complete-container">
+          <input class="d-none" name="category" />
+          <input id="category-input" class="form-control mb-2" type="text" placeholder="Lĩnh vực" required />
+          <div id="category-auto-complete" class="list-group shadow"></div>
+          <input name="price" class="form-control mb-2" type="number" placeholder="Giá (VNĐ)" required />
+        </div>
+        <input id="file-input" class="d-none" name="avatar" type="file" accept="image/*" onchange="changeImage(this)" />
+        <div class="card mb-2" id="image-selector" onclick="triggerFileInput()">
+          <div>
+            <div class="pb-2">
+              <span>
+                <i class="fa fa-image fa-lg"></i>
+              </span>
+            </div>
+            <p><b>Chọn ảnh đại diện</b> từ thiết bị</p>
+          </div>
+        </div>
+        <textarea class="border-0" id="description" name="description" placeholder="Mô tả khóa học"></textarea>
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-secondary mr-2">Hủy</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.tiny.cloud/1/s9g2wvhjas0t1gx4fozjrktqpilnrp362xmamalr5ra9tddi/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+  tinymce.init({
+    selector: '#description',
+    menubar: false,
+    toolbar: 'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | outdent indent',
+    plugins: 'advlist link image lists',
+    resize: false,
+    height: 400,
+    content_style: '/css/editor.css',
+  });
+
+  const form = document.getElementById('main-form');
+  let categories = '<%- JSON.stringify(categories) %>';
+  const mainCategories = JSON.parse(categories);
+  let subCategories = [];
+  mainCategories.forEach((category) => {
+    subCategories = subCategories.concat(category.subCategories);
+  });
+  console.log(subCategories);
+  const categoryInput = document.getElementById('category-input');
+  const categoryAutoComplete = document.getElementById('category-auto-complete');
+
+  categoryInput.addEventListener('input', (e) => {
+    form.category.value = '';
+    const value = e.target.value;
+    categoryAutoComplete.innerHTML = '';
+    if (value === '') {
+      return;
+    }
+
+    const displayCategories = subCategories.filter((category) => category.name.includes(value));
+    displayCategories.forEach((category) => {
+      const element = document.createElement('a');
+      element.href = '#';
+      element.className = 'list-group-item list-group-item-action py-2';
+      element.textContent = category.name;
+
+      element.addEventListener('click', (e) => {
+        form.category.value = category._id;
+        categoryInput.value = category.name;
+        categoryAutoComplete.innerHTML = '';
+      });
+
+      categoryAutoComplete.appendChild(element);
+    });
+  });
+
+  const fileInput = document.getElementById('file-input');
+  const imageSelector = document.getElementById('image-selector');
+
+  function triggerFileInput() {
+    fileInput.click();
+  }
+
+  function changeImage(e) {
+    if (e.files[0] === null) {
+      imageSelector.style.backgroundImage = 'none';
+      imageSelector.children[0].style.display = 'block';
+    } else {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        imageSelector.style.backgroundImage = `url("${e.target.result}")`;
+        imageSelector.children[0].style.display = 'none';
+      };
+      reader.readAsDataURL(e.files[0]);
+    }
+  }
+</script>
+<%- include("../partials/footer") %>

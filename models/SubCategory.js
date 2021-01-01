@@ -6,4 +6,6 @@ const schema = mongoose.Schema({
   courses: [mongoose.Types.ObjectId],
 });
 
+schema.index({ name: 'text' });
+
 module.exports = mongoose.model('SubCategory', schema);

@@ -1,0 +1,31 @@
+.auto-complete-container {
+  position: relative;
+}
+
+.auto-complete-container > .list-group {
+  position: absolute;
+  width: 100%;
+  z-index: 999;
+}
+
+#image-selector {
+  position: relative;
+  cursor: pointer;
+  background-size: cover;
+  width: 100% !important;
+  border-style: dashed;
+  padding-top: 56.25% !important;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.fa-image {
+  font-size: 56px !important;
+}
+
+#image-selector > div {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

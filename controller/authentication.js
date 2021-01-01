@@ -34,47 +34,51 @@ exports.signIn = (req, res) => {
       case 'admin':
         res.redirect('/admin');
         break;
+      case 'lecturer':
+        res.redirect('/lecturer');
     }
   }
 };
 
 exports.signUp = (req, res) => {
-  User.register(
-    new User({
-      email: req.body.email,
-      fullName: req.body.fullName,
-      role: 'student',
-    }),
-    req.body.password,
-    (err, user) => {
-      if (err) {
-        req.flash('info', 'Email đã tồn tại');
-        res.redirect('/signup');
-      } else {
-        const key = new ActiveKey({ user: user._id });
-        key.save().then((document) => {
-          const mailOptions = {
-            from: `Online Academy <${process.env.EMAIL_ADDRESS}>`,
-            to: user.email,
-            subject: 'Kích hoạt tài khoản Online Academy',
-            html: mailContent.getConfirmMationMailContent(
-              user.fullName,
-              document._id
-            ),
-          };
+  if (req.body.role !== 'student' && req.body.role !== 'lecturer') {
+    req.flash('error', 'Không chấp nhận tài khoản với role này');
+    res.redirect('/signup');
+  } else {
+    User.register(
+      new User({
+        email: req.body.email,
+        fullName: req.body.fullName,
+        role: req.body.role,
+      }),
+      req.body.password,
+      (err, user) => {
+        if (err) {
+          req.flash('info', 'Email đã tồn tại');
+          res.redirect('/signup');
+        } else {
+          const key = new ActiveKey({ user: user._id });
+          key.save().then((document) => {
+            const mailOptions = {
+              from: `Online Academy <${process.env.EMAIL_ADDRESS}>`,
+              to: user.email,
+              subject: 'Kích hoạt tài khoản Online Academy',
+              html: mailContent.getConfirmMationMailContent(user.fullName, document._id),
+            };
 
-          transporter.sendMail(mailOptions, (err, info) => {
-            if (err) {
-              console.log(err);
-            }
+            transporter.sendMail(mailOptions, (err, info) => {
+              if (err) {
+                console.log(err);
+              }
+            });
+
+            req.flash('email', user.email);
+            res.redirect('/need-active');
           });
-
-          req.flash('email', user.email);
-          res.redirect('/need-active');
-        });
+        }
       }
-    }
-  );
+    );
+  }
 };
 
 exports.signOut = (req, res) => {

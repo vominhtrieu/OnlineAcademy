@@ -1,10 +1,11 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
+const flashInfo = require('../middlewares/flashInfo');
 const authenticationController = require('../controller/authentication');
 
-router.get('/signin', authenticationController.getSignInView);
-router.get('/signup', authenticationController.getSignUpView);
+router.get('/signin', flashInfo, authenticationController.getSignInView);
+router.get('/signup', flashInfo, authenticationController.getSignUpView);
 
 router.post(
   '/signin',

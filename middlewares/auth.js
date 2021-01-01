@@ -14,6 +14,14 @@ exports.checkIsLecturer = (req, res, next) => {
   }
 };
 
+exports.checkIsAccepted = (req, res, next) => {
+  if (req.user.accepted) {
+    next();
+  } else {
+    res.send('notAccepted');
+  }
+};
+
 exports.checkIsAdmin = (req, res, next) => {
   if (req.isAuthenticated() && req.user.role == 'admin') next();
   else {

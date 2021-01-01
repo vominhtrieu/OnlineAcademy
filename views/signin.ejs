@@ -1,6 +1,4 @@
-<%- include("partials/header", {title: "Đăng nhập"}) %> <%-include("partials/navbar") %>
-
-<link rel="stylesheet" href="css/auth.css" />
+<%- include("partials/header", {title: "Đăng nhập", css: ["auth"]}) %> <%-include("partials/navbar") %>
 
 <div class="container mt-5">
   <div class="card shadow-sm border-0">
@@ -14,9 +12,16 @@
           <div class="card-body">
             <h4 class="card-title text-center mb-4 mt-1">Đăng nhập</h4>
             <hr />
-            <% if (message.length > 0) { %>
+            <% if (error.length > 0) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= error %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <% } if (info.length > 0) { %>
             <div class="alert alert-primary alert-dismissible fade show" role="alert">
-              <%= message %>
+              <%= info %>
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

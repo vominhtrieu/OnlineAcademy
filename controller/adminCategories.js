@@ -53,6 +53,16 @@ exports.getSubCategoriesView = (req, res) => {
     });
 };
 
+exports.findCategory = (req, res) => {
+  SubCategory.find({ $text: { $search: req.query.q } }, (err, categories) => {
+    if (err || !categories) {
+      res.json([]);
+    } else {
+      res.json(categories);
+    }
+  });
+};
+
 exports.updateMainCategory = (req, res) => {
   MainCategory.updateOne({ _id: new mongoose.Types.ObjectId(req.params.id) }, { name: req.body.categoryName }, (err) => {
     if (err) {

@@ -16,7 +16,12 @@
       integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
       crossorigin="anonymous"
     />
+
+    <% css.forEach(file => { %>
+      <link rel="stylesheet" href="/css/<%=file%>.css" />
+    <% }); %>
     <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/navbar.css" />
     <link rel="stylesheet" href="/css/footer.css" />
     <script src="https://kit.fontawesome.com/6028e24ede.js" crossorigin="anonymous"></script>
   </head>

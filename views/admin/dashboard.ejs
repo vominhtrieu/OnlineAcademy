@@ -1,5 +1,4 @@
-<%- include("../partials/header", {title: "Bảng điều khiển"}) %>
-<%-include("../partials/navbar") %>
+<%- include("../partials/header", {title: "Bảng điều khiển", css: []}) %> <%-include("../partials/navbar") %>
 
 <div class="container mt-4">
   <% if (error.length > 0) { %>
@@ -20,11 +19,7 @@
   <div class="row">
     <div class="col-md-6 col-sm-12">
       <div class="card w-100 h-100 shadow-sm border-0">
-        <img
-          class="card-img-top"
-          src="/assets/category.svg"
-          alt="Card image cap"
-        />
+        <img class="card-img-top" src="/assets/category.svg" alt="Card image cap" />
         <div class="card-body">
           <h5 class="card-title">
             <a href="/admin/categories">Quản lý lĩnh vực</a>
@@ -36,11 +31,7 @@
 
     <div class="col-md-6 col-sm-12">
       <div class="card w-100 h-100 shadow-sm border-0">
-        <img
-          class="card-img-top"
-          src="/assets/courses.svg"
-          alt="Card image cap"
-        />
+        <img class="card-img-top" src="/assets/courses.svg" alt="Card image cap" />
         <div class="card-body">
           <h5 class="card-title"><a href="#">Quản lý khóa học</a></h5>
           <p class="card-text">Xem danh sách các khoa học đang chờ phê duyệt</p>
@@ -52,26 +43,16 @@
   <div class="row">
     <div class="col-md-6 col-sm-12 mt-4">
       <div class="card w-100 h-100 shadow-sm border-0">
-        <img
-          class="card-img-top"
-          src="/assets/lecturer.svg"
-          alt="Card image cap"
-        />
+        <img class="card-img-top" src="/assets/lecturer.svg" alt="Card image cap" />
         <div class="card-body">
           <h5 class="card-title"><a href="#">Quản lý giảng viên</a></h5>
-          <p class="card-text">
-            Xem danh sách các giảng viên đang chờ phê duyệt
-          </p>
+          <p class="card-text">Xem danh sách các giảng viên đang chờ phê duyệt</p>
         </div>
       </div>
     </div>
     <div class="col-md-6 col-sm-12 mt-4">
       <div class="card w-100 h-100 shadow-sm border-0">
-        <img
-          class="card-img-top"
-          src="/assets/setting.svg"
-          alt="Card image cap"
-        />
+        <img class="card-img-top" src="/assets/setting.svg" alt="Card image cap" />
         <div class="card-body">
           <h5 class="card-title"><a href="#">Cài đặt</a></h5>
           <p class="card-text">Thay đổi thông tin tài khoản</p>

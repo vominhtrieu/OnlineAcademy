@@ -13,6 +13,10 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  accepted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 schema.plugin(passportLocalMongoose, { usernameField: 'email' });

@@ -2,11 +2,21 @@ const mongoose = require('mongoose');
 
 const schema = mongoose.Schema({
   name: String,
-  image: String,
+  avatar: String,
+  description: String,
+  category: {
+    type: mongoose.Types.ObjectId,
+    ref: 'SubCategory',
+  },
+  price: Number,
+  discount: {
+    type: Number,
+    default: 0,
+  },
   view: Number,
   reviews: [
     {
-      type: mongoose.type.ObjectId,
+      type: mongoose.Types.ObjectId,
       ref: 'Review',
     },
   ],

@@ -63,8 +63,12 @@ app.use(require('./middlewares/categories'));
 app.use('/', require('./routes/studentHome'));
 app.use('/', require('./routes/authentication'));
 app.use('/', require('./routes/activation'));
+
 app.use('/admin', require('./routes/adminDashboard'));
 app.use('/admin/categories', require('./routes/adminCategories'));
+
+app.use('/lecturer', require('./routes/lecturerDashboard'));
+app.use('/lecturer/course', require('./routes/lecturerCourse'));
 app.use('/about', require('./routes/about'));
 
 const port = process.env.PORT || 3000;

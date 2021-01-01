@@ -1,0 +1,52 @@
+<%- include("../partials/header", {title: "Bảng điều khiển", css: [] }) %> <%-include("../partials/navbar") %>
+
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+</div>
+
+<div class="container mt-2">
+  <div class="card rounded border-0 shadow-sm">
+    <div class="card-header bg-primary d-flex align-items-center">
+      <h5 class="text-white m-0">Thêm lĩnh vực mới</h5>
+      <a href="/lecturer/course/new" class="ml-auto btn btn-primary m-0"><i class="fa fa-plus fa-lg"></i></a>
+    </div>
+    <table class="table">
+      <tr>
+        <th>Khóa học</th>
+        <th>Lĩnh vực</th>
+        <th class="text-center">Giá</th>
+        <th class="text-center">Giảm giá</th>
+        <th class="text-center">Học viên</th>
+        <th class="text-center">Doanh thu</th>
+        <th class="text-center">Đánh giá</th>
+      </tr>
+      <% courses.forEach(course => { %>
+      <tr>
+        <td><%= course.name %></td>
+        <td><%= course.category.name %></td>
+        <td class="text-center"><%= course.price %> VNĐ</td>
+        <td class="text-center"><%= course.discount %>%</td>
+        <td class="text-center"><%= course.students.length %></td>
+        <td class="text-center">0</td>
+        <td class="text-center">0</td>
+      </tr>
+      <% }); %>
+    </table>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>

@@ -17,13 +17,11 @@ exports.getSignInView = (req, res) => {
 };
 
 exports.getSignUpView = (req, res) => {
-  res.render('signup', { message: req.flash('info') });
+  res.render('signup');
 };
 
 exports.signIn = (req, res) => {
   if (!req.user.active) {
-    req.flash('email', req.user.email);
-    req.logout();
     res.redirect('/need-active');
   } else {
     res.locals.currentUser = req.user;
@@ -54,6 +52,7 @@ exports.signUp = (req, res) => {
       req.body.password,
       (err, user) => {
         if (err) {
+          console.log(err);
           req.flash('info', 'Email đã tồn tại');
           res.redirect('/signup');
         } else {
@@ -73,7 +72,10 @@ exports.signUp = (req, res) => {
             });
 
             req.flash('email', user.email);
-            res.redirect('/need-active');
+
+            passport.authenticate('local', {
+              successRedirect: '/need-active',
+            })(req, res);
           });
         }
       }

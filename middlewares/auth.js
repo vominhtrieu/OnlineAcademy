@@ -1,3 +1,11 @@
+exports.checkAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) next();
+  else {
+    req.flash('Bạn không có quyền truy cập trang này');
+    res.redirect('/signin');
+  }
+};
+
 exports.checkIsStudent = (req, res, next) => {
   if (req.isAuthenticated() && req.user.role == 'student') next();
   else {

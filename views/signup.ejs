@@ -14,9 +14,16 @@
           <div class="card-body">
             <h4 class="card-title text-center mb-4 mt-1">Đăng ký</h4>
             <hr />
-            <% if (message.length > 0) { %>
+            <% if (error.length > 0) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <%= error %>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <% } if (info.length > 0) { %>
             <div class="alert alert-primary alert-dismissible fade show" role="alert">
-              <%= message %>
+              <%= info %>
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -51,7 +58,7 @@
                 <input type="password" id="retype-password" placeholder="Nhập lại mật khẩu" class="form-control" aria-describedby="helpId" />
               </div>
 
-              <input class="d-none" type="text" name="role" />
+              <input class="d-none" type="text" name="role" value="student" />
 
               <div class="mb-3">
                 <div class="row">

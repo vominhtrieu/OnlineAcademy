@@ -29,3 +29,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+div[role='application'] {
+  border-color: #ced4da;
+  border-radius: 5px;
+}

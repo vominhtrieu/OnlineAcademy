@@ -1,0 +1,70 @@
+<%- include("../partials/header", {title: course.name, css: ["newCourse"]}) %> <%-include("../partials/navbar") %>
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+</div>
+
+<div class="modal fade" id="delete-course-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <!-- Action is set via javascript -->
+      <form action="/lecturer/course/<%= course._id%>?_method=DELETE" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Xác nhận xóa</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">Bạn có chắc muốn xóa khóa học này</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xác nhận</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-2">
+  <div class="card rounded border-0 shadow-sm">
+    <div class="card-header bg-primary">
+      <h5 class="text-white m-0"><%= course.name %></h5>
+    </div>
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-12 col-md-6">
+          <div class="card mb-2">
+            <img class="w-100" src="/images/<%=course.avatar%>" />
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <p><b>Tên khóa học: </b><%= course.name %></p>
+          <p><b>Giá: </b><%= course.price %> VNĐ</p>
+          <p><b>Giảm giá: </b><%= course.discount %>%</p>
+          <p><b>Số lượng học viên: </b><%= course.students.length %></p>
+          <p><b>Doanh thu: </b>0 VNĐ</p>
+        </div>
+      </div>
+      <p><b>Mô tả</b><%- course.description %></p>
+      <div class="w-100 d-flex justify-content-end mt-4">
+        <a href="/lecturer/course/<%= course._id %>/edit" class="btn btn-primary mr-2">Chỉnh sửa</a>
+        <button class="btn btn-danger mr-2" data-toggle="modal" data-target="#delete-course-modal">Xóa</button>
+        <a class="btn btn-secondary" href="/lecturer">Quay lại</a>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include("../partials/footer") %>

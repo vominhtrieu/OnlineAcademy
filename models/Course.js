@@ -14,16 +14,27 @@ const schema = mongoose.Schema({
     default: 0,
   },
   view: Number,
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+
+  lecturer: {
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+  },
+  sections: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Section',
+    },
+  ],
   reviews: [
     {
       type: mongoose.Types.ObjectId,
       ref: 'Review',
     },
   ],
-  lecturer: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
-  },
   students: [
     {
       type: mongoose.Types.ObjectId,

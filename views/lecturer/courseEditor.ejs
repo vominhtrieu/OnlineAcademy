@@ -1,4 +1,5 @@
-<%- include("../partials/header", {title: "Thêm khóa học", css: ["newCourse"]}) %> <%-include("../partials/navbar") %>
+<%- include("../partials/header", {title: `Chỉnh sửa khóa ${course.name}`, css: ["newCourse"]}) %>
+<%-include("../partials/navbar") %>
 <div class="container mt-4">
   <% if (error.length > 0) { %>
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -17,14 +18,39 @@
   <% } %>
 </div>
 
+<div class="modal fade" id="delete-category-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <!-- Action is set via javascript -->
+      <form id="deleteForm" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Xác nhận xóa</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">Bạn có chắc muốn xóa lĩnh vực này</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xác nhận</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="container mt-2">
   <div class="card rounded border-0 shadow-sm">
     <div class="card-header bg-primary">
-      <h5 class="text-white m-0">Thêm khóa học mới</h5>
+      <h5 class="text-white m-0">Chỉnh sửa khóa <%= course.name %></h5>
     </div>
     <div class="card-body">
-      <p>Bạn hãy điền các thông tin cơ bản của khóa học trước, các chương của khóa học sẽ được thêm sau</p>
-      <form id="main-form" action="/lecturer/course" method="POST" enctype="multipart/form-data">
+      <form
+        id="main-form"
+        action="/lecturer/course/<%= course._id %>?_method=PUT"
+        method="POST"
+        enctype="multipart/form-data"
+      >
         <div class="row mb-2">
           <div class="col-12 col-md-6">
             <input
@@ -47,19 +73,49 @@
             </div>
           </div>
           <div class="col-12 col-md-6">
-            <input class="form-control mb-2" type="text" name="name" placeholder="Tên khóa học" required />
+            <input
+              class="form-control mb-2"
+              type="text"
+              name="name"
+              value="<%= course.name %>"
+              placeholder="Tên khóa học"
+              required
+            />
             <div class="auto-complete-container">
-              <input class="d-none" name="category" />
-              <input id="category-input" class="form-control mb-2" type="text" placeholder="Lĩnh vực" required />
+              <input class="d-none" value="<%= course.category._id %>" name="category" />
+              <input
+                id="category-input"
+                value="<%= course.category.name %>"
+                class="form-control mb-2"
+                type="text"
+                placeholder="Lĩnh vực"
+                required
+              />
               <div id="category-auto-complete" class="list-group shadow"></div>
-              <input name="price" class="form-control mb-2" type="number" placeholder="Giá (VNĐ)" required />
+              <input name="price" value="<%= course.price %>" class="d-none" />
+              <input
+                value="<%= course.price %>"
+                class="currency-selector form-control mb-2"
+                placeholder="Giá (VNĐ)"
+                required
+              />
+              <input
+                name="discount"
+                value="<%= course.discount %>"
+                class="form-control mb-2"
+                type="number"
+                placeholder="Giảm giá (VNĐ)"
+                required
+              />
             </div>
           </div>
         </div>
-        <textarea class="border-0" id="description" name="description" placeholder="Mô tả khóa học"></textarea>
+        <textarea class="border-0" id="description" name="description" placeholder="Mô tả khóa học">
+        <%- course.description %>
+        </textarea>
         <div class="d-flex justify-content-end mt-4">
           <button type="button" class="btn btn-secondary mr-2">Hủy</button>
-          <button type="submit" class="btn btn-primary">Thêm</button>
+          <button type="submit" class="btn btn-primary">Cập nhật</button>
         </div>
       </form>
     </div>
@@ -89,10 +145,8 @@
   mainCategories.forEach((category) => {
     subCategories = subCategories.concat(category.subCategories);
   });
-  console.log(subCategories);
   const categoryInput = document.getElementById('category-input');
   const categoryAutoComplete = document.getElementById('category-auto-complete');
-
   categoryInput.addEventListener('input', (e) => {
     form.category.value = '';
     const value = e.target.value;
@@ -120,7 +174,12 @@
 
   const fileInput = document.getElementById('file-input');
   const imageSelector = document.getElementById('image-selector');
-
+  let avatar = '<%=course.avatar %>';
+  if (avatar) {
+    avatar = '/images/' + avatar;
+    imageSelector.style.backgroundImage = `url("${avatar}")`;
+    imageSelector.children[0].style.display = 'none';
+  }
   function triggerFileInput() {
     fileInput.click();
   }

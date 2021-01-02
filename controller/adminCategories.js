@@ -64,15 +64,19 @@ exports.findCategory = (req, res) => {
 };
 
 exports.updateMainCategory = (req, res) => {
-  MainCategory.updateOne({ _id: new mongoose.Types.ObjectId(req.params.id) }, { name: req.body.categoryName }, (err) => {
-    if (err) {
-      req.flash('error', 'Không thể chỉnh sửa lĩnh vực này, vui lòng thử lại sau');
-      res.redirect('/admin/categories');
-    } else {
-      req.flash('info', 'Chỉnh sửa thành công');
-      res.redirect('/admin/categories');
+  MainCategory.updateOne(
+    { _id: new mongoose.Types.ObjectId(req.params.id) },
+    { name: req.body.categoryName },
+    (err) => {
+      if (err) {
+        req.flash('error', 'Không thể chỉnh sửa lĩnh vực này, vui lòng thử lại sau');
+        res.redirect('/admin/categories');
+      } else {
+        req.flash('info', 'Chỉnh sửa thành công');
+        res.redirect('/admin/categories');
+      }
     }
-  });
+  );
 };
 
 exports.deleteMainCategory = (req, res) => {
@@ -117,14 +121,18 @@ exports.addNewSubCategory = (req, res) => {
 };
 
 exports.updateSubCategory = (req, res) => {
-  SubCategory.updateOne({ _id: new mongoose.Types.ObjectId(req.params.subId) }, { name: req.body.categoryName }, (err) => {
-    if (err) {
-      req.flash('error', 'Không thể chỉnh sửa lĩnh vực này, vui lòng thử lại sau');
-    } else {
-      req.flash('info', 'Chỉnh sửa thành công');
+  SubCategory.updateOne(
+    { _id: new mongoose.Types.ObjectId(req.params.subId) },
+    { name: req.body.categoryName },
+    (err) => {
+      if (err) {
+        req.flash('error', 'Không thể chỉnh sửa lĩnh vực này, vui lòng thử lại sau');
+      } else {
+        req.flash('info', 'Chỉnh sửa thành công');
+      }
+      res.redirect(`/admin/categories/${req.params.mainId}`);
     }
-    res.redirect(`/admin/categories/${req.params.mainId}`);
-  });
+  );
 };
 
 exports.deleteSubCategory = (req, res) => {

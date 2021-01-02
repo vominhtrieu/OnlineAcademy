@@ -20,8 +20,8 @@
 
 <div class="container mt-2">
   <div class="card rounded border-0 shadow-sm">
-    <div class="card-header bg-primary d-flex align-items-center">
-      <h5 class="text-white m-0">Thêm lĩnh vực mới</h5>
+    <div class="card-header bg-primary d-flex align-items-center py-1">
+      <h5 class="text-white m-0">Khoá học của bạn</h5>
       <a href="/lecturer/course/new" class="ml-auto btn btn-primary m-0"><i class="fa fa-plus fa-lg"></i></a>
     </div>
     <table class="table">
@@ -36,7 +36,7 @@
       </tr>
       <% courses.forEach(course => { %>
       <tr>
-        <td><%= course.name %></td>
+        <td><a href="/lecturer/course/<%=course._id%>"><%= course.name %></a></td>
         <td><%= course.category.name %></td>
         <td class="text-center"><%= course.price %> VNĐ</td>
         <td class="text-center"><%= course.discount %>%</td>

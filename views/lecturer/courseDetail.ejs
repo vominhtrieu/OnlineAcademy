@@ -60,6 +60,7 @@
       </div>
       <p><b>Mô tả</b><%- course.description %></p>
       <div class="w-100 d-flex justify-content-end mt-4">
+        <a href="/lecturer/course/<%= course._id %>/sections" class="btn btn-primary mr-2"> Thêm nội dung khóa học </a>
         <a href="/lecturer/course/<%= course._id %>/edit" class="btn btn-primary mr-2">Chỉnh sửa</a>
         <button class="btn btn-danger mr-2" data-toggle="modal" data-target="#delete-course-modal">Xóa</button>
         <a class="btn btn-secondary" href="/lecturer">Quay lại</a>

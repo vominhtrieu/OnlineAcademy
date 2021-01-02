@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Course = require('../models/Course');
+const Section = require('../models/Section');
 const SubCategory = require('../models/SubCategory');
 
 exports.getAddNewCourseView = (_req, res) => {
@@ -28,6 +29,19 @@ exports.getCourseEditorView = (req, res) => {
         res.redirect('/lecturer');
       } else {
         res.render('lecturer/courseEditor', { course });
+      }
+    });
+};
+
+exports.getSectionsView = (req, res) => {
+  Course.findById(req.params.id)
+    .populate('sections')
+    .exec((err, course) => {
+      if (err || !course) {
+        req.flash('error', `Không tìm thấy khóa học với id là ${req.params.id}`);
+        res.redirect('/lecturer');
+      } else {
+        res.render('lecturer/courseSections', { course });
       }
     });
 };
@@ -61,6 +75,32 @@ exports.addNewCourse = (req, res) => {
   });
 };
 
+exports.addNewSection = (req, res) => {
+  //Find course by its id and check if its lecturer is current user
+  Section.create({ name: req.body.name }, (err, section) => {
+    if (err) {
+      req.flash('error', 'Không thể thêm chương này');
+      return res.redirect(`/lecturer/course/${req.params.id}/sections`);
+    }
+    Course.updateOne(
+      { _id: req.params.id, lecturer: req.user._id },
+      {
+        $push: {
+          sections: section._id,
+        },
+      },
+      (err, course) => {
+        if (err || !course) {
+          req.flash('error', 'Không thể thêm chương này');
+        } else {
+          req.flash('info', `Đã thêm chương ${section.name}`);
+        }
+        res.redirect(`/lecturer/course/${req.params.id}/sections`);
+      }
+    );
+  });
+};
+
 exports.updateCourse = (req, res) => {
   const updateData = {
     name: req.body.name,
@@ -76,7 +116,6 @@ exports.updateCourse = (req, res) => {
   //Find course by its id and check if its lecturer is current user
   Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData, (err, course) => {
     if (err || !course) {
-      console.log(err);
       req.flash('error', 'Không thể chỉnh sửa khóa học này');
     } else {
       req.flash('info', 'Chỉnh sửa khóa học thành công');

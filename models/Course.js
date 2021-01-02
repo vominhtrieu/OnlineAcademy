@@ -18,7 +18,6 @@ const schema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
-
   lecturer: {
     type: mongoose.Types.ObjectId,
     ref: 'User',

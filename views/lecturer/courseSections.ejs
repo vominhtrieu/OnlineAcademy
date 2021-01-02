@@ -1,0 +1,48 @@
+<%- include("../partials/header", {title: 'Các chương trong ' + course.name, css: []}) %>
+<%-include("../partials/navbar") %>
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+
+  <div class="card">
+    <div class="card-header bg-primary">
+      <h5 class="text-white m-0">Chỉnh sửa nội dung khóa <%= course.name %></h5>
+    </div>
+    <div class="card-body">
+      <form action="/lecturer/course/<%=course._id%>/sections" method="POST">
+        <div class="d-flex">
+          <input class="form-control mr-2" name="name" type="text" placeholder="Tên chương mới" required />
+          <button class="btn btn-primary" type="submit">Thêm</button>
+        </div>
+      </form>
+      <ul class="list-group mt-3">
+        <% course.sections.forEach(section => { %>
+        <li class="list-group-item py-1 pl-3 pr-1 d-flex align-items-center">
+          <a href="#"><%= section.name %></a>
+          <div class="ml-auto">
+            <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
+            <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+          </div>
+        </li>
+        <% }); %>
+      </ul>
+      <button class="btn btn-primary mt-2 ml-auto d-flex align-items-center">
+        <i class="fa fa-check pr-2"></i>Đánh dấu hoàn thành
+      </button>
+    </div>
+  </div>
+</div>
+<%- include("../partials/footer") %>

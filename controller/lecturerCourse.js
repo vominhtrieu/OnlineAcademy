@@ -64,6 +64,7 @@ exports.getSectionView = (req, res) => {
 exports.addNewCourse = (req, res) => {
   SubCategory.findById(new mongoose.Types.ObjectId(req.body.category), (err, category) => {
     if (err || !category) {
+      console.log(err);
       req.flash('error', 'Không thể thêm khóa học này');
       res.redirect('/lecturer');
     } else {
@@ -79,6 +80,7 @@ exports.addNewCourse = (req, res) => {
         },
         (err) => {
           if (err) {
+            console.log(err);
             req.flash('error', 'Không thể thêm khóa học này');
           } else {
             req.flash('info', 'Đã thêm khóa học thành công');
@@ -117,15 +119,27 @@ exports.addNewSection = (req, res) => {
 };
 
 exports.addNewLecture = (req, res) => {
+  function handleError() {
+    req.flash('error', 'Không thể thêm bài giảng này');
+    return res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
+  }
+  if (!req.file) {
+    handleError();
+  }
+  const ext = req.file.originalname.split('.').pop();
+  if (!ext) {
+    handleError();
+  }
+
   Lecture.create(
     {
       name: req.body.name,
       video: req.file.filename,
+      extension: ext,
     },
     (err, lecture) => {
       if (err) {
-        req.flash('error', 'Không thể thêm bài giảng này');
-        return res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
+        handleError();
       }
       Section.updateOne(
         { _id: req.params.sectionId },

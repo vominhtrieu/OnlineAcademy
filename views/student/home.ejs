@@ -73,49 +73,16 @@
 
   <h5 class="mt-4">Khóa học được đăng ký nhiều nhất</h5>
   <div class="row">
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 4 }}), %>
-    </div>
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 4 }}), %>
-    </div>
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 5 }})%>
-    </div>
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 2 }}), %>
-    </div>
+    <% featureCourses.forEach(course => { %>
+    <div class="col-sm-3"><%- include("partials/course", {course}), %></div>
+    <% }); %>
   </div>
-  <h5 class="mt-4">Khoá học mới nhất</h5>
+
+  <h5 class="mt-4">Khóa học được xem nhiều nhất</h5>
   <div class="row">
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 4 }}), %>
-    </div>
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 4 }}), %>
-    </div>
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 5 }})%>
-    </div>
-    <div class="col-sm-3">
-      <%- include("partials/course", { course: { name: "Lập trình Web" , img:
-      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&dl=christopher-gower-m_HRfLhgABo-unsplash.jpg&w=1920"
-      , rating: 2 }}), %>
-    </div>
+    <% mostViewCourses.forEach(course => { %>
+    <div class="col-sm-3"><%- include("partials/course", {course}), %></div>
+    <% }); %>
   </div>
 </div>
 <%- include('../partials/footer.ejs') %>

@@ -26,6 +26,10 @@ body {
   object-position: center;
 }
 
+.rating-bar {
+  font-size: 14px;
+}
+
 .fa-star.checked {
   color: #ffa500;
 }

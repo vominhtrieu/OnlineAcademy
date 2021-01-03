@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const schema = mongoose.Schema({
   name: String,
-  description: String,
   video: String,
 });
 

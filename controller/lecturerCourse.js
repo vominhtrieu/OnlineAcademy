@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Course = require('../models/Course');
 const Section = require('../models/Section');
+const Lecture = require('../models/Lecture');
 const SubCategory = require('../models/SubCategory');
 
 exports.getAddNewCourseView = (_req, res) => {
@@ -42,6 +43,20 @@ exports.getSectionsView = (req, res) => {
         res.redirect('/lecturer');
       } else {
         res.render('lecturer/courseSections', { course });
+      }
+    });
+};
+
+exports.getSectionView = (req, res) => {
+  Section.findById(mongoose.Types.ObjectId(req.params.sectionId))
+    .populate('lectures')
+    .exec((err, section) => {
+      if (err || !section) {
+        console.log(err);
+        req.flash('error', `Không tìm thấy chương với id là ${req.params.id}`);
+        res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
+      } else {
+        res.render('lecturer/courseSection', { section });
       }
     });
 };
@@ -99,6 +114,37 @@ exports.addNewSection = (req, res) => {
       }
     );
   });
+};
+
+exports.addNewLecture = (req, res) => {
+  Lecture.create(
+    {
+      name: req.body.name,
+      video: req.file.filename,
+    },
+    (err, lecture) => {
+      if (err) {
+        req.flash('error', 'Không thể thêm bài giảng này');
+        return res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
+      }
+      Section.updateOne(
+        { _id: req.params.sectionId },
+        {
+          $push: {
+            lectures: lecture._id,
+          },
+        },
+        (err) => {
+          if (err) {
+            req.flash('error', 'Không thể thêm bài giảng này');
+          } else {
+            req.flash('info', `Đã thêm bài giảng ${lecture.name}`);
+          }
+          res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
+        }
+      );
+    }
+  );
 };
 
 exports.updateCourse = (req, res) => {

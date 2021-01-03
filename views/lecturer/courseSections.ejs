@@ -31,7 +31,7 @@
       <ul class="list-group mt-3">
         <% course.sections.forEach(section => { %>
         <li class="list-group-item py-1 pl-3 pr-1 d-flex align-items-center">
-          <a href="#"><%= section.name %></a>
+          <a href="sections/<%=section._id%>"><%= section.name %></a>
           <div class="ml-auto">
             <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
             <button class="btn btn-danger"><i class="fa fa-trash"></i></button>

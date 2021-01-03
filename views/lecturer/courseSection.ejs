@@ -1,0 +1,108 @@
+<%- include("../partials/header", {title: 'Các chương trong ' + section.name, css: []}) %>
+<%-include("../partials/navbar") %>
+<link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+
+<div class="modal fade" id="new-lecture-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm bài giảng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="<%= section._id %>/lecture" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <input class="form-control" type="text" name="name" placeholder="Tên bài giảng" />
+          <input class="form-control d-none" id="video-input" type="file" name="video" accept="video/*" />
+          <div class="my-2 d-flex align-items-center">
+            <a id="video-selector-toggler" class="btn btn-primary mr-2">
+              <i class="fa fa-plus fa-lg"></i>
+            </a>
+            <span id="file-name-label" class="overflow-hidden">Chọn video</span>
+          </div>
+          <video
+            class="video-js vjs-default-skin vjs-16-9"
+            id="video-preview"
+            class="video-js"
+            controls
+            preload="none"
+            data-setup="{}"
+          >
+            <p class="vjs-no-js">
+              To view this video please enable JavaScript, and consider upgrading to a web browser that
+              <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+            </p>
+          </video>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+
+  <div class="card">
+    <div class="card-header bg-primary d-flex align-items-center py-1">
+      <h5 class="text-white m-0">Chỉnh sửa nội dung chương <%= section.name %></h5>
+      <span class="ml-auto">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#new-lecture-modal">
+          <i class="fa fa-plus fa-lg"></i>
+        </button>
+      </span>
+    </div>
+    <ul class="list-group border-0">
+      <% section.lectures.forEach(lecture => { %>
+      <li class="list-group-item py-1 pl-3 pr-1 d-flex align-items-center">
+        <a href="#"><%= lecture.name %></a>
+        <div class="ml-auto">
+          <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
+          <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+        </div>
+      </li>
+      <% }); %>
+    </ul>
+  </div>
+</div>
+
+<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+<script>
+  const videoInput = document.getElementById('video-input');
+  const videoSelectorToggler = document.getElementById('video-selector-toggler');
+  const filenameLabel = document.getElementById('file-name-label');
+  videoInput.addEventListener('change', (e) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      const url = window.URL.createObjectURL(file);
+      filenameLabel.textContent = file.name;
+      videojs('video-preview').src({
+        type: `video/${file.name.split('.').pop()}`,
+        src: url,
+      });
+    }
+  });
+
+  videoSelectorToggler.addEventListener('click', (e) => {
+    videoInput.click();
+  });
+</script>
+<%- include("../partials/footer") %>

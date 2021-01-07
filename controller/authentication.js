@@ -13,10 +13,16 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.getSignInView = (req, res) => {
+  if (req.user) {
+    req.logout();
+  }
   res.render('signin', { message: req.flash('info') });
 };
 
 exports.getSignUpView = (req, res) => {
+  if (req.user) {
+    req.logout();
+  }
   res.render('signup');
 };
 

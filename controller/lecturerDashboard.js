@@ -1,6 +1,6 @@
 const Course = require('../models/Course');
 
-exports.getDashboard = (req, res) => {
+exports.getDashboard = (_req, res) => {
   Course.find({})
     .populate('category')
     .exec((err, courses) => {

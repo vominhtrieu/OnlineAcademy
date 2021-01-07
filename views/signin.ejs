@@ -12,33 +12,34 @@
           <div class="card-body">
             <h4 class="card-title text-center mb-4 mt-1">Đăng nhập</h4>
             <hr />
-            <% if (error.length > 0) { %>
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-              <%= error %>
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <% } if (info.length > 0) { %>
-            <div class="alert alert-primary alert-dismissible fade show" role="alert">
-              <%= info %>
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <% } %>
+            <% include('partials/messageAlert') %>
+
             <form class="form-group mt-4" method="POST" action="/signin">
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
                 </div>
-                <input type="text" name="email" id="email" placeholder="Email" class="form-control" aria-describedby="helpId" />
+                <input
+                  type="text"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
               </div>
               <div class="input-group my-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-lock"></i></span>
                 </div>
-                <input type="password" name="password" id="password" placeholder="Password" class="form-control" aria-describedby="helpId" />
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Password"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
               </div>
 
               <button id="submit-btn" class="btn btn-primary mt-2">Đăng nhập</button>
@@ -53,7 +54,13 @@
               <div class="line-separator"></div>
             </div>
 
-            <div class="g-signin2" data-width="370" data-longtitle="true" data-onsuccess="onSignIn" data-theme="dark"></div>
+            <div
+              class="g-signin2"
+              data-width="370"
+              data-longtitle="true"
+              data-onsuccess="onSignIn"
+              data-theme="dark"
+            ></div>
           </div>
         </div>
       </div>

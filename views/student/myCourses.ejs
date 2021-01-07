@@ -1,0 +1,40 @@
+<%- include ('../partials/header.ejs', {title: `Khoá học của bạn`, css: []}) %> <%- include ('../partials/navbar.ejs')
+%>
+
+<div class="container">
+  <div class="card mt-3 border-0 shadow-sm">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0">Khoá học của bạn</h5></div>
+    <div class="card-body">
+      <div class="row">
+        <% invoices.forEach((invoice) => { %>
+        <div class="col-3">
+          <div class="card shadow border-0 h-100">
+            <img class="card-img-top" src="<%= `/images/${invoice.course.avatar}` %>" alt="Card image cap" />
+            <div class="card-body">
+              <a href="/courses/<%=invoice.course._id%>">
+                <h5 class="card-title"><%= invoice.course.name %></h5>
+              </a>
+              <h6 class="card-subtitle mb-1 font-weight-light"><%= invoice.course.lecturerName %></h6>
+              <div class="rating-bar">
+                <% for (let i=0; i < 5; i++) { %>
+                <span  class="fa fa-star <%= i < 3 ? " checked" : "" %>"></span>
+                <% } %>
+                <span>(100) </span>
+              </div>
+              <% if (invoice.course.price) { %>
+              <h6 class="card-text"><%= new Intl.NumberFormat('de-DE').format(invoice.course.price) %> ₫</h6>
+              <h6 class="card-text font-weight-light">
+                  <%= `Bạn đã mua khóa học này vào ngày ${invoice.date.getDate()}/${invoice.date.getMonth() + 1}/${invoice.date.getFullYear()}` %>
+                </h6>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+<%- include('../partials/footer.ejs', {scripts: ["courseDetail"]}) %>

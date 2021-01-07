@@ -34,6 +34,7 @@ mongoose.connect(
 passport.use(User.createStrategy());
 
 app.use('/images', express.static('images'));
+app.use('/videos', express.static('videos'));
 app.use('/', express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -62,8 +63,13 @@ app.use(flash());
 app.use(require('./middlewares/categories'));
 
 app.use('/', require('./routes/studentHome'));
+app.use('/', require('./routes/studentInfomation'));
+app.use('/search', require('./routes/search'));
 app.use('/', require('./routes/authentication'));
 app.use('/', require('./routes/activation'));
+
+app.use('/courses', require('./routes/studentCourse'));
+app.use('/courses', require('./routes/studentReview'));
 
 app.use('/admin', require('./routes/adminDashboard'));
 app.use('/admin/categories', require('./routes/adminCategories'));

@@ -1,0 +1,20 @@
+<%- include ('../partials/header.ejs', {title: `Kết quả tìm kiếm của "${query}"`, css: []}) %> <%- include
+('../partials/navbar.ejs') %>
+
+<div class="container">
+  <div class="card mt-3 border-0 shadow-sm">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0">Kết quả tìm kiếm "<%= query %>"</h5></div>
+    <div class="card-body">
+      <% if (courses.length === 0) { %>
+      <p>Không tìm thấy khóa học phù hợp</p>
+      <% } else { %>
+      <ul class="list-group">
+        <% courses.forEach(course => { %>
+        <li class="list-group-item"><%= course.name %></li>
+        <% });} %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs', {scripts: ["courseDetail"]}) %>

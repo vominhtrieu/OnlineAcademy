@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light mx-auto fixed-top shadow-sm" style="z-index: 100">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mx-auto fixed-top shadow-sm py-1" style="z-index: 100">
   <div class="container">
-    <a class="navbar-brand" href="/">
-      Logo
+    <a class="navbar-brand py-0" href="/">
+      <img height="30" src="/assets/logo.svg">
       <% if (currentUser && currentUser.role !== 'student') { %>
         <sub><%= currentUser.role %></sub>
       <% } %>
@@ -20,11 +20,11 @@
               <span class="fa fa-chevron-down fa-xs ml-1"></span>
             </a>
           </li class="nav-item">
-          <form class="ml-4 form-inline" id="search-form">
+          <form class="ml-4 form-inline" id="search-form" method="GET" action="/search">
             <div id="search-container" class="input-group">
-              <input id="search-bar" type="text" class="form-control" placeholder="Tìm khóa học..." />
+              <input id="search-bar" type="text" class="form-control" name="q" placeholder="Tìm khóa học..." />
               <div class="input-group-append lg-0">
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary" type="submit">
                   <i class="fa fa-search"></i>
                 </button>
               </div>
@@ -50,6 +50,7 @@
                   <div class="dropdown-menu dropdown-menu-right text-right mt-3" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="#">Trang cá nhân</a>
                     <a class="dropdown-item" href="#">Chỉnh sửa thông tin</a>
+                    <a class="dropdown-item" href="/my-courses">Khóa học của bạn</a>
                     <div class="dropdown-divider"></div>
                     <form class="dropdown-item" method="POST" action="/signout">
                       <button id="signout-btn" class="p-0 btn btn-link text-danger text-decoration-none" href="#">

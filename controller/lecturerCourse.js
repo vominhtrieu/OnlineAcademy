@@ -176,6 +176,7 @@ exports.updateCourse = (req, res) => {
   //Find course by its id and check if its lecturer is current user
   Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData, (err, course) => {
     if (err || !course) {
+      console.log(err);
       req.flash('error', 'Không thể chỉnh sửa khóa học này');
     } else {
       req.flash('info', 'Chỉnh sửa khóa học thành công');

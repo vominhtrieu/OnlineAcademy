@@ -1,24 +1,8 @@
 <%- include("../partials/header", {title: `Chỉnh sửa khóa ${course.name}`, css: ["newCourse"]}) %>
 <%-include("../partials/navbar") %>
-<div class="container mt-4">
-  <% if (error.length > 0) { %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= error %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <% } if (info.length > 0) { %>
-  <div class="alert alert-primary alert-dismissible fade show" role="alert">
-    <%= info %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <% } %>
-</div>
 
 <div class="container mt-2">
+  <% include('../partials/messageAlert') %>
   <div class="card rounded border-0 shadow-sm">
     <div class="card-header bg-primary">
       <h5 class="text-white m-0">Chỉnh sửa khóa <%= course.name %></h5>
@@ -29,6 +13,7 @@
         action="/lecturer/course/<%= course._id %>?_method=PUT"
         method="POST"
         enctype="multipart/form-data"
+        autocomplete="off"
       >
         <div class="row mb-2">
           <div class="col-12 col-md-6">
@@ -105,6 +90,8 @@
   src="https://cdn.tiny.cloud/1/s9g2wvhjas0t1gx4fozjrktqpilnrp362xmamalr5ra9tddi/tinymce/5/tinymce.min.js"
   referrerpolicy="origin"
 ></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+
 <script>
   tinymce.init({
     selector: '#description',
@@ -116,7 +103,9 @@
     height: 400,
     content_style: '/css/editor.css',
   });
+</script>
 
+<script>
   const form = document.getElementById('main-form');
   let categories = '<%- JSON.stringify(categories) %>';
   const mainCategories = JSON.parse(categories);
@@ -126,6 +115,9 @@
   });
   const categoryInput = document.getElementById('category-input');
   const categoryAutoComplete = document.getElementById('category-auto-complete');
+
+  const fuse = new Fuse(subCategories, { keys: ['name'] });
+
   categoryInput.addEventListener('input', (e) => {
     form.category.value = '';
     const value = e.target.value;
@@ -134,16 +126,17 @@
       return;
     }
 
-    const displayCategories = subCategories.filter((category) => category.name.includes(value));
-    displayCategories.forEach((category) => {
+    const result = fuse.search(value);
+
+    result.forEach(({ item }) => {
       const element = document.createElement('a');
       element.href = '#';
       element.className = 'list-group-item list-group-item-action py-2';
-      element.textContent = category.name;
+      element.textContent = item.name;
 
       element.addEventListener('click', (e) => {
-        form.category.value = category._id;
-        categoryInput.value = category.name;
+        form.category.value = item._id;
+        categoryInput.value = item.name;
         categoryAutoComplete.innerHTML = '';
       });
 
@@ -177,4 +170,5 @@
     }
   }
 </script>
+
 <%- include("../partials/footer") %>

@@ -24,7 +24,7 @@
     </div>
     <div class="card-body">
       <p>Bạn hãy điền các thông tin cơ bản của khóa học trước, các chương của khóa học sẽ được thêm sau</p>
-      <form id="main-form" action="/lecturer/course" method="POST" enctype="multipart/form-data">
+      <form id="main-form" action="/lecturer/course" method="POST" enctype="multipart/form-data" autocomplete="off">
         <div class="row mb-2">
           <div class="col-12 col-md-6">
             <input
@@ -47,10 +47,24 @@
             </div>
           </div>
           <div class="col-12 col-md-6">
-            <input class="form-control mb-2" type="text" name="name" placeholder="Tên khóa học" required />
+            <input
+              class="form-control mb-2"
+              type="text"
+              name="name"
+              placeholder="Tên khóa học"
+              autocomplete="off"
+              required
+            />
             <div class="auto-complete-container">
-              <input class="d-none" name="category" />
-              <input id="category-input" class="form-control mb-2" type="text" placeholder="Lĩnh vực" required />
+              <input class="d-none" name="category" autocomplete="off" />
+              <input
+                id="category-input"
+                class="form-control mb-2"
+                type="text"
+                placeholder="Lĩnh vực"
+                autocomplete="off"
+                required
+              />
               <div id="category-auto-complete" class="list-group shadow"></div>
               <input name="price" class="form-control mb-2" type="number" placeholder="Giá (VNĐ)" required />
             </div>
@@ -70,6 +84,8 @@
   src="https://cdn.tiny.cloud/1/s9g2wvhjas0t1gx4fozjrktqpilnrp362xmamalr5ra9tddi/tinymce/5/tinymce.min.js"
   referrerpolicy="origin"
 ></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+
 <script>
   tinymce.init({
     selector: '#description',
@@ -81,7 +97,9 @@
     height: 400,
     content_style: '/css/editor.css',
   });
+</script>
 
+<script>
   const form = document.getElementById('main-form');
   let categories = '<%- JSON.stringify(categories) %>';
   const mainCategories = JSON.parse(categories);
@@ -89,9 +107,10 @@
   mainCategories.forEach((category) => {
     subCategories = subCategories.concat(category.subCategories);
   });
-  console.log(subCategories);
   const categoryInput = document.getElementById('category-input');
   const categoryAutoComplete = document.getElementById('category-auto-complete');
+
+  const fuse = new Fuse(subCategories, { keys: ['name'] });
 
   categoryInput.addEventListener('input', (e) => {
     form.category.value = '';
@@ -101,16 +120,17 @@
       return;
     }
 
-    const displayCategories = subCategories.filter((category) => category.name.includes(value));
-    displayCategories.forEach((category) => {
+    const result = fuse.search(value);
+
+    result.forEach(({ item }) => {
       const element = document.createElement('a');
       element.href = '#';
       element.className = 'list-group-item list-group-item-action py-2';
-      element.textContent = category.name;
+      element.textContent = item.name;
 
       element.addEventListener('click', (e) => {
-        form.category.value = category._id;
-        categoryInput.value = category.name;
+        form.category.value = item._id;
+        categoryInput.value = item.name;
         categoryAutoComplete.innerHTML = '';
       });
 

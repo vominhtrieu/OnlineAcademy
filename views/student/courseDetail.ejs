@@ -1,0 +1,166 @@
+<%- include ('../partials/header.ejs', {title: `Khóa học ${course.name}`, css: []}) %> <%- include
+('../partials/navbar.ejs') %>
+
+<div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác nhận đăng ký</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <% if (currentUser) { %>
+      <div class="modal-body">Bạn có chắc muốn tham gia khóa học này?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        <form method="POST" action="/courses/<%=course._id%>/enroll">
+          <button type="submit" class="btn btn-primary">Xác nhận</button>
+        </form>
+      </div>
+      <% } else { %>
+      <div class="modal-body">Bạn chưa đăng nhập, hãy đăng nhập để tham gia khóa học</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+        <a href="/signin" class="btn btn-primary">Đăng nhập</a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bạn đánh giá thế nào về khóa học này?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" action="/courses/<%=course._id%>/review">
+        <div class="modal-body">
+          <input id="scoreInput" class="d-none" type="number" name="score" value="5" />
+          <div class="rating-bar-lg mb-4 d-flex align-items-center">
+            <span><i class="fa fa-star fa-lg cursor-pointer px-1 checked" data-score="1"></i></span>
+            <span><i class="fa fa-star fa-lg cursor-pointer px-1 checked" data-score="2"></i></span>
+            <span><i class="fa fa-star fa-lg cursor-pointer px-1 checked" data-score="3"></i></span>
+            <span><i class="fa fa-star fa-lg cursor-pointer px-1 checked" data-score="4"></i></span>
+            <span><i class="fa fa-star fa-lg cursor-pointer px-1 checked" data-score="5"></i></span>
+            <h5 id="scoreMessage" class="mb-0 ml-2">Tuyệt vời</h5>
+          </div>
+          <!-- <textarea class="border-0" id="reviewMessage" name="message" placeholder="Hãy để lại vài lời nhận xét">
+          </textarea> -->
+          <textarea name="message" class="form-control" placeholder="Hãy để lại vài lời nhận xét"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Đánh giá</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-3">
+  <%- include ('../partials/messageAlert.ejs') %>
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 col-12">
+          <img class="w-100 rounded" src="/images/<%=course.avatar%>" />
+        </div>
+        <div class="col-md-6 col-12">
+          <h2><%= course.name %></h2>
+          <h5 class="mb-1"><%= course.lecturer.fullName %></h5>
+
+          <% if (course.reviews.length > 0) { %>
+          <div>
+            <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
+            <span class="fa fa-star checked"></span>
+            <% } else { %>
+            <span class="fa fa-star"></span>
+            <% }} %>
+            <span>(<%= course.reviews.length%>)</span>
+          </div>
+          <% } else { %>
+          <p>Chưa có người đánh giá</p>
+          <% } %>
+          <p><%= course.studentCount %> người học</p>
+          <% if (!locals.invoice) { %>
+          <button class="btn btn-primary mt-2" type="button" data-toggle="modal" data-target="#courseModal">
+            Ghi danh
+          </button>
+          <% } else { %>
+          <a href="/courses/<%=course._id%>/sections/1/lectures/1" class="btn btn-primary mt-2">Vào học</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h5 class="pl-4 mt-2">Đánh giá</h5>
+
+  <div class="w-100">
+    <div class="w-100 mb-2">
+      <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#reviewModal">
+        <i class="fa fa-pen-alt mr-2"></i>Viết bài đánh giá
+      </button>
+    </div>
+    <% if (course.reviews.length !==0) { %>
+    <div class="w-100 shadow-sm border-0 d-flex">
+      <ul class="list-group w-100">
+        <% course.reviews.forEach(review => { %>
+        <li class="list-group-item">
+          <h6 class="mb-0">
+            <%= review.writer.fullName %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= review.score) { %>
+            <i class="fa fa-star checked"></i>
+            <% } else { %>
+            <i class="fa fa-star"></i>
+            <%}} %>
+          </h6>
+          <p><%= review.message %></p>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+    <% } else { %>
+    <div class="card">
+      <div class="card-body"><h6 class="mb-0">Hiện chưa có bài đánh giá</h6></div>
+    </div>
+
+    <% } %>
+  </div>
+
+  <h5 class="pl-4 mt-4">Chương trình học</h5>
+  <div class="w-100 shadow-sm border-0">
+    <ul class="list-group">
+      <% course.sections.forEach((section, sectionNo) => { %>
+      <li class="list-group-item">
+        <h6 class="cursor-pointer mb-0 section-toggler">
+          <span class="h-100 position-absolute">
+            <i class="fa fa-chevron-down mr-2"></i>
+          </span>
+          <span class="pl-4"><%= section.name %></span>
+        </h6>
+      </li>
+      <li class="list-group-item section-content">
+        <ul class="list-unstyled">
+          <% section.lectures.forEach(lecture => { %>
+          <li class="pl-4">
+            <% if (lecture.preview) { %>
+            <a href="#"><%= lecture.name %> - xem thử</a>
+            <% } else { %> <%= lecture.name %> <% }}); %>
+          </li>
+        </ul>
+      </li>
+      <% }); %>
+    </ul>
+  </div>
+</div>
+
+<script
+  src="https://cdn.tiny.cloud/1/s9g2wvhjas0t1gx4fozjrktqpilnrp362xmamalr5ra9tddi/tinymce/5/tinymce.min.js"
+  referrerpolicy="origin"
+></script>
+<%- include('../partials/footer.ejs', {scripts: ["courseSection", "review"]}) %>

@@ -30,6 +30,18 @@ body {
   font-size: 14px;
 }
 
+.rating-bar-lg {
+  font-size: 24px;
+}
+
 .fa-star.checked {
   color: #ffa500;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+textarea.form-control {
+  resize: none;
 }

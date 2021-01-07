@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const homeController = require('../controller/studentHome');
+const controller = require('../controller/studentInfomation');
 const flashInfo = require('../middlewares/flashInfo');
 
-router.get('/', flashInfo, homeController.getHomeView);
+router.get('/my-courses', flashInfo, controller.getMyCourses);
 
 module.exports = router;

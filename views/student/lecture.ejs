@@ -1,0 +1,149 @@
+<%- include ('../partials/header.ejs', {title: `Khoá học ${course.name}`, css: []}) %> <%- include
+('../partials/navbar.ejs') %>
+
+<link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+<link href="http://videojs.github.io/font/css/videojs-icons.css" rel="stylesheet" />
+
+<div class="container">
+  <div class="card mt-3 border-0 shadow-sm">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0"><%= course.name %></h5></div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-8 col-12">
+          <video
+            class="video-js vjs-default-skin vjs-16-9"
+            id="video-preview"
+            class="video-js"
+            controls
+            autoplay
+            data-setup="{}"
+          >
+            <source src="/videos/<%= lecture.video %>" type="video/<%= lecture.extension %>" />
+            <p class="vjs-no-js">
+              To view this video please enable JavaScript, and consider upgrading to a web browser that
+              <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+            </p>
+          </video>
+          <div class="row d-flex align-items-center mt-2 mx-3">
+            <% if (lecture.previousSectionNo !== null) { %>
+            <a
+              class="col-1 btn btn-primary"
+              href="/courses/<%=course._id%>/sections/<%=lecture.previousSectionNo%>/lectures/<%=lecture.previousLectureNo%>"
+              ><i class="fa fa-chevron-left fa-lg"></i
+            ></a>
+            <% } else { %>
+            <a class="col-1 btn btn-disable"><i class="fa fa-chevron-left fa-lg"></i></a>
+            <% } %>
+            <p class="col-10 mb-0 text-center"><%= lecture.name %></p>
+            <% if(lecture.nextSectionNo !== null) { %>
+            <a
+              class="col-1 btn btn-primary"
+              href="/courses/<%=course._id%>/sections/<%=lecture.nextSectionNo%>/lectures/<%=lecture.nextLectureNo%>"
+              ><i class="fa fa-chevron-right" aria-hidden="true"></i
+            ></a>
+            <% } else { %>
+            <a class="col-1 btn btn-disable"><i class="fa fa-chevron-right fa-lg"></i></a>
+            <% } %>
+          </div>
+        </div>
+        <div class="col-md-4 col-12">
+          <%- include ('../partials/messageAlert.ejs') %>
+          <ul class="list-group">
+            <% course.sections.forEach((section, sectionNo) => { %>
+            <li class="list-group-item">
+              <h6 class="cursor-pointer mb-0 section-toggler">
+                <span class="h-100 position-absolute">
+                  <i class="fa fa-chevron-down mr-2"></i>
+                </span>
+                <span class="pl-4"><%= section.name %></span>
+              </h6>
+            </li>
+            <li class="list-group-item section-content">
+              <ul class="list-unstyled">
+                <% section.lectures.forEach(({name}, lectureNo) => { %> <% if (sectionNo !== lecture.sectionNo ||
+                lectureNo !== lecture.lectureNo) { %>
+                <li class="pl-4">
+                  <a class="text-dark" href="/courses/<%=course._id%>/sections/<%=sectionNo%>/lectures/<%=lectureNo%>"
+                    ><%= name %></a
+                  >
+                </li>
+                <% } else { %>
+                <li class="text-primary d-flex">
+                  <span class="position-absolute"><i class="fa fa-play"></i></span>
+                  <a class="text-decoration-none pl-4 cursor-pointer"><%= name %></a>
+                </li>
+                <% } %> <% }); %>
+              </ul>
+            </li>
+            <% }); %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+<script>
+  var player = videojs(document.querySelector('video'), {});
+  try {
+    player.volume(1);
+  } catch (e) {}
+
+  player.playlist(videoList);
+
+  document.querySelector('.previous').addEventListener('click', function () {
+    player.playlist.previous();
+  });
+  document.querySelector('.next').addEventListener('click', function () {
+    player.playlist.next();
+  });
+  document.querySelector('.jump').addEventListener('click', function () {
+    player.playlist.currentItem(2); // play third
+    player.play();
+  });
+
+  player.playlist.autoadvance(0); // play all
+
+  Array.prototype.forEach.call(document.querySelectorAll('[name=autoadvance]'), function (el) {
+    el.addEventListener('click', function () {
+      var value = document.querySelector('[name=autoadvance]:checked').value;
+      //alert(value);
+      player.playlist.autoadvance(JSON.parse(value));
+    });
+  });
+
+  var Button = videojs.getComponent('Button');
+
+  var PrevButton = videojs.extend(Button, {
+    constructor: function () {
+      Button.apply(this, arguments);
+      this.addClass('vjs-icon-previous-item');
+      this.controlText('Previous');
+    },
+
+    handleClick: function () {
+      console.log('click');
+      player.playlist.previous();
+    },
+  });
+
+  var NextButton = videojs.extend(Button, {
+    constructor: function () {
+      Button.apply(this, arguments);
+      this.addClass('vjs-icon-next-item');
+      this.controlText('Next');
+    },
+
+    handleClick: function () {
+      console.log('click');
+      player.playlist.next();
+    },
+  });
+
+  videojs.registerComponent('NextButton', NextButton);
+  videojs.registerComponent('PrevButton', PrevButton);
+  player.getChild('controlBar').addChild('PrevButton', {}, 0);
+  player.getChild('controlBar').addChild('NextButton', {}, 2);
+</script>
+<%- include('../partials/footer.ejs', {scripts: ["courseSection"]}) %>

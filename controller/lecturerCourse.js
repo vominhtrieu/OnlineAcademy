@@ -3,6 +3,7 @@ const Course = require('../models/Course');
 const Section = require('../models/Section');
 const Lecture = require('../models/Lecture');
 const SubCategory = require('../models/SubCategory');
+const uploader = require('../services/uploader');
 
 exports.getAddNewCourseView = (_req, res) => {
   res.render('lecturer/newCourse');
@@ -62,32 +63,38 @@ exports.getSectionView = (req, res) => {
 };
 
 exports.addNewCourse = (req, res) => {
-  SubCategory.findById(new mongoose.Types.ObjectId(req.body.category), (err, category) => {
+  SubCategory.findById(new mongoose.Types.ObjectId(req.body.category), async (err, category) => {
     if (err || !category) {
-      console.log(err);
       req.flash('error', 'Không thể thêm khóa học này');
       res.redirect('/lecturer');
     } else {
-      Course.create(
-        {
-          name: req.body.name,
-          avatar: req.file.filename,
-          category: category._id,
-          view: 0,
-          description: req.body.description,
-          price: req.body.price,
-          lecturer: req.user._id,
-        },
-        (err) => {
-          if (err) {
-            console.log(err);
-            req.flash('error', 'Không thể thêm khóa học này');
-          } else {
-            req.flash('info', 'Đã thêm khóa học thành công');
-          }
-          res.redirect('/lecturer');
+      uploader.uploadImage(req.file, (err, image) => {
+        if (err || !image) {
+          req.flash('error', 'Không thể thêm khóa học này');
+          return res.redirect('/lecturer');
         }
-      );
+
+        Course.create(
+          {
+            name: req.body.name,
+            avatar: image.url,
+            category: category._id,
+            view: 0,
+            description: req.body.description,
+            price: req.body.price,
+            lecturer: req.user._id,
+          },
+          (err) => {
+            if (err) {
+              console.log(err);
+              req.flash('error', 'Không thể thêm khóa học này');
+            } else {
+              req.flash('info', 'Đã thêm khóa học thành công');
+            }
+            res.redirect('/lecturer');
+          }
+        );
+      });
     }
   });
 };
@@ -125,40 +132,51 @@ exports.addNewLecture = (req, res) => {
   }
   if (!req.file) {
     handleError();
+    return;
   }
+
   const ext = req.file.originalname.split('.').pop();
   if (!ext) {
     handleError();
+    return;
   }
 
-  Lecture.create(
-    {
-      name: req.body.name,
-      video: req.file.filename,
-      extension: ext,
-    },
-    (err, lecture) => {
-      if (err) {
-        handleError();
-      }
-      Section.updateOne(
-        { _id: req.params.sectionId },
-        {
-          $push: {
-            lectures: lecture._id,
-          },
-        },
-        (err) => {
-          if (err) {
-            req.flash('error', 'Không thể thêm bài giảng này');
-          } else {
-            req.flash('info', `Đã thêm bài giảng ${lecture.name}`);
-          }
-          res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
-        }
-      );
+  uploader.uploadVideo(req.file, (err, video) => {
+    if (err) {
+      req.flash('error', 'Timeout');
+      res.redirect('back');
+      return;
     }
-  );
+    Lecture.create(
+      {
+        name: req.body.name,
+        video: video.url,
+        extension: ext,
+      },
+      (err, lecture) => {
+        if (err) {
+          handleError();
+          return;
+        }
+        Section.updateOne(
+          { _id: req.params.sectionId },
+          {
+            $push: {
+              lectures: lecture._id,
+            },
+          },
+          (err) => {
+            if (err) {
+              req.flash('error', 'Không thể thêm bài giảng này');
+            } else {
+              req.flash('info', `Đã thêm bài giảng ${lecture.name}`);
+            }
+            res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
+          }
+        );
+      }
+    );
+  });
 };
 
 exports.updateCourse = (req, res) => {
@@ -169,20 +187,31 @@ exports.updateCourse = (req, res) => {
     discount: req.body.discount,
     description: req.body.description,
   };
-  if (req.file) {
-    updateData.avatar = req.file.filename;
-  }
 
   //Find course by its id and check if its lecturer is current user
-  Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData, (err, course) => {
-    if (err || !course) {
-      console.log(err);
-      req.flash('error', 'Không thể chỉnh sửa khóa học này');
-    } else {
-      req.flash('info', 'Chỉnh sửa khóa học thành công');
-    }
-    res.redirect(`/lecturer/course/${req.params.id}`);
-  });
+  const updateFunc = () => {
+    Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData, (err, course) => {
+      if (err || !course) {
+        req.flash('error', 'Không thể chỉnh sửa khóa học này');
+      } else {
+        req.flash('info', 'Chỉnh sửa khóa học thành công');
+      }
+      res.redirect(`/lecturer/course/${req.params.id}`);
+    });
+  };
+
+  if (req.file) {
+    uploader.uploadImage(req.file, (err, image) => {
+      if (err) {
+        req.flash('error', 'Không thể tải ảnh lên server');
+        return res.redirect('back');
+      }
+      updateData.avatar = image.url;
+      updateFunc();
+    });
+  } else {
+    updateFunc();
+  }
 };
 
 exports.deleteCourse = (req, res) => {

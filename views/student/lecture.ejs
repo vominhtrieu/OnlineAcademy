@@ -58,7 +58,7 @@
                 <span class="pl-4"><%= section.name %></span>
               </h6>
             </li>
-            <li class="list-group-item section-content">
+            <li class="list-group-item" data-toggle="<%= sectionNo === lecture.sectionNo%>">
               <ul class="list-unstyled">
                 <% section.lectures.forEach(({name}, lectureNo) => { %> <% if (sectionNo !== lecture.sectionNo ||
                 lectureNo !== lecture.lectureNo) { %>
@@ -89,8 +89,6 @@
   try {
     player.volume(1);
   } catch (e) {}
-
-  player.playlist(videoList);
 
   document.querySelector('.previous').addEventListener('click', function () {
     player.playlist.previous();

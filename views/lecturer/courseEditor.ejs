@@ -148,7 +148,6 @@
   const imageSelector = document.getElementById('image-selector');
   let avatar = '<%=course.avatar %>';
   if (avatar) {
-    avatar = '/images/' + avatar;
     imageSelector.style.backgroundImage = `url("${avatar}")`;
     imageSelector.children[0].style.display = 'none';
   }
@@ -161,12 +160,8 @@
       imageSelector.style.backgroundImage = 'none';
       imageSelector.children[0].style.display = 'block';
     } else {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        imageSelector.style.backgroundImage = `url("${e.target.result}")`;
-        imageSelector.children[0].style.display = 'none';
-      };
-      reader.readAsDataURL(e.files[0]);
+      imageSelector.style.backgroundImage = `url("${window.URL.createObjectURL(e.files[0])}")`;
+      imageSelector.children[0].style.display = 'none';
     }
   }
 </script>

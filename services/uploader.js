@@ -21,8 +21,12 @@ exports.uploadImage = (file, cb) => {
 };
 
 exports.uploadVideo = (file, cb) => {
+  //Check file is exceed 100MB
+  if (file.buffer.length > 104857600)
+    return cb(new Error('Kích thước file không đươc vượt quá 100MB, bạn nên chia nhỏ ra thành các video con'));
   const uploadStream = cloudinary.uploader.upload_stream(
     {
+      resource_type: 'video',
       folder: 'videos',
       timeout: 1000000,
     },

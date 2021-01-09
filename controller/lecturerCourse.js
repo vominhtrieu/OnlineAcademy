@@ -143,6 +143,7 @@ exports.addNewLecture = (req, res) => {
 
   uploader.uploadVideo(req.file, (err, video) => {
     if (err) {
+      console.log(err);
       req.flash('error', 'Timeout');
       res.redirect('back');
       return;

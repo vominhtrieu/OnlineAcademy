@@ -77,7 +77,7 @@ exports.addNewCourse = (req, res) => {
         Course.create(
           {
             name: req.body.name,
-            avatar: image.url,
+            avatar: image.secure_url,
             category: category._id,
             view: 0,
             description: req.body.description,
@@ -151,7 +151,7 @@ exports.addNewLecture = (req, res) => {
     Lecture.create(
       {
         name: req.body.name,
-        video: video.url,
+        video: video.secure_url,
         extension: ext,
       },
       (err, lecture) => {
@@ -207,7 +207,7 @@ exports.updateCourse = (req, res) => {
         req.flash('error', 'Không thể tải ảnh lên server');
         return res.redirect('back');
       }
-      updateData.avatar = image.url;
+      updateData.avatar = image.secure_url;
       updateFunc();
     });
   } else {

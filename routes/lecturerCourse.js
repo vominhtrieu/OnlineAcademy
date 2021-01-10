@@ -23,6 +23,8 @@ router.post(
   controller.addNewLecture
 );
 
+router.delete('/:courseId/sections/:sectionId', checkIsLecturer, controller.deleteSection);
+
 router.put('/:id', checkIsLecturer, upload.single('avatar'), controller.updateCourse);
 router.delete('/:id', checkIsLecturer, controller.deleteCourse);
 

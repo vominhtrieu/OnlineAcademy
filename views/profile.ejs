@@ -1,0 +1,40 @@
+<%- include("./partials/header", {title: `${currentUser.fullName}`, css: []}) %> <%-include("./partials/navbar") %>
+
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+  <div class="row">
+      <div class="col-3">
+        <img src="" alt="">
+      </div>
+      <div class="col-9">
+          <div class="card">
+              <div class="card-header">
+                  <h5><%= currentUser.fullName%></h5>
+              </div>
+              <div class="card-body">
+                  <p><b>Họ tên:</b> <%=currentUser.fullName %></p>
+                  <p><b>Email:</b> <%=currentUser.email %></p>
+                  <p class="font-weight-bold">Khóa học của bạn</p>
+                  <p class="font-weight-bold">Khóa học yêu thích</p>
+              </div>
+          </div>
+      </div>
+  </div>
+  </div>
+</div>
+
+<%- include("./partials/footer") %>

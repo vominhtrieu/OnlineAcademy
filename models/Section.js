@@ -10,4 +10,8 @@ const schema = mongoose.Schema({
   ],
 });
 
+schema.pre('deleteOne', (next) => {
+  console.log('Alo');
+});
+
 module.exports = mongoose.model('Section', schema);

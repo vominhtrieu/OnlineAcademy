@@ -45,48 +45,41 @@ exports.signIn = (req, res) => {
 };
 
 exports.signUp = (req, res) => {
-  if (req.body.role !== 'student' && req.body.role !== 'lecturer') {
-    req.flash('error', 'Không chấp nhận tài khoản với role này');
-    res.redirect('/signup');
-  } else {
-    User.register(
-      new User({
-        email: req.body.email,
-        fullName: req.body.fullName,
-        role: req.body.role,
-      }),
-      req.body.password,
-      (err, user) => {
-        if (err) {
-          console.log(err);
-          req.flash('info', 'Email đã tồn tại');
-          res.redirect('/signup');
-        } else {
-          const key = new ActiveKey({ user: user._id });
-          key.save().then((document) => {
-            const mailOptions = {
-              from: `Online Academy <${process.env.EMAIL_ADDRESS}>`,
-              to: user.email,
-              subject: 'Kích hoạt tài khoản Online Academy',
-              html: mailContent.getConfirmMationMailContent(user.fullName, document._id),
-            };
+  User.register(
+    new User({
+      email: req.body.email,
+      fullName: req.body.fullName,
+      role: 'student',
+    }),
+    req.body.password,
+    (err, user) => {
+      if (err) {
+        console.log(err);
+        req.flash('info', 'Email đã tồn tại');
+        res.redirect('/signup');
+      } else {
+        const key = new ActiveKey({ user: user._id });
+        key.save().then((document) => {
+          const mailOptions = {
+            from: `Online Academy <${process.env.EMAIL_ADDRESS}>`,
+            to: user.email,
+            subject: 'Kích hoạt tài khoản Online Academy',
+            html: mailContent.getConfirmMationMailContent(user.fullName, document._id),
+          };
 
-            transporter.sendMail(mailOptions, (err, info) => {
-              if (err) {
-                console.log(err);
-              }
-            });
-
-            req.flash('email', user.email);
-
-            passport.authenticate('local', {
-              successRedirect: '/need-active',
-            })(req, res);
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              console.log(err);
+            }
           });
-        }
+
+          passport.authenticate('local', {
+            successRedirect: '/need-active',
+          })(req, res);
+        });
       }
-    );
-  }
+    }
+  );
 };
 
 exports.signOut = (req, res) => {

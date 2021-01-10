@@ -1,0 +1,94 @@
+<%- include("../partials/header", {title: "Danh sách khóa học", css: []}) %> <%-include("../partials/navbar") %>
+
+<div class="modal fade" id="delete-course-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <!-- Action is set via javascript -->
+      <form id="deleteForm" method="POST">
+        <div class="modal-header">
+          <h5 class="modal-title">Xác nhận xóa</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">Bạn có chắc muốn xóa khóa học này</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Xác nhận</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4">
+  <% if (error.length> 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length> 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-header py-2 bg-primary text-white d-flex align-items-center">
+      <div class="d-flex align-items-center">
+        <a href="/admin" class="btn btn-primary mr-1">
+          <i class="fas fa-chevron-left fa-lg fa-lg mr-2"></i>
+        </a>
+        Danh sách khóa học
+      </div>
+    </div>
+
+    <div class="d-flex row py-3 table-header w-100 ml-0">
+      <span class="col-1 text-center font-weight-bold">#</span>
+      <span class="col-sm-3 col-4 font-weight-bold">Tên</span>
+      <span class="col-sm-3 col-4 font-weight-bold">Giảng viên</span>
+      <span class="col-2 text-nowrap overflow-hidden text-center font-weight-bold">Giá</span>
+      <span class="col-3 text-nowrap overflow-hidden text-center font-weight-bold">Thao tác</span>
+    </div>
+
+    <% courses.forEach((course, index)=> { %>
+    <div id="<%=course._id%>" class="d-flex row py-2 border-bottom ml-0 w-100">
+      <span class="col-1 text-center d-flex align-items-center justify-content-center font-weight-bold"
+        ><%= index + 1 %></span
+      >
+      <span class="col-sm-3 col-4 d-flex align-items-center"> <%= course.name %></span>
+      <span class="col-sm-3 col-4 text-center d-flex align-items-center"><%= course.lecturer.fullName %></span>
+
+      <span class="col-2 text-nowrap overflow-hidden d-flex align-items-center justify-content-center"
+        ><%= course.price %></span
+      >
+      <span class="col-3 action-container" class="col-3">
+        <button
+          class="btn btn-danger mx-auto"
+          data-toggle="modal"
+          data-target="#delete-course-modal"
+          data-course-id="<%= course._id %>"
+          onclick="setActionForDeleteForm(this)"
+        >
+          <span class="fas fa-trash"></span>
+        </button>
+      </span>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  const deleteForm = document.getElementById('deleteForm');
+
+  function setActionForDeleteForm(button) {
+    deleteForm.action = `/admin/courses/${button.dataset.courseId}?_method=DELETE`;
+  }
+</script>
+
+<%- include("../partials/footer") %>

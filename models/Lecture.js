@@ -2,8 +2,11 @@ const mongoose = require('mongoose');
 
 const schema = mongoose.Schema({
   name: String,
-  video: String,
-  extension: String,
+  video: {
+    path: String,
+    publicId: String, //use for cloudinary
+    extension: String,
+  },
   preview: {
     type: Boolean,
     default: false,

@@ -71,6 +71,13 @@
                 placeholder="Giảm giá (VNĐ)"
                 required
               />
+
+              <textarea
+                name="shortDescription"
+                value="<%= course.shortDescription %>"
+                class="form-control"
+                placeholder="Mô tả ngắn"
+              ></textarea>
             </div>
           </div>
         </div>
@@ -146,7 +153,8 @@
 
   const fileInput = document.getElementById('file-input');
   const imageSelector = document.getElementById('image-selector');
-  let avatar = '<%=course.avatar %>';
+  let avatar = '<%=course.avatar.path %>';
+
   if (avatar) {
     imageSelector.style.backgroundImage = `url("${avatar}")`;
     imageSelector.children[0].style.display = 'none';

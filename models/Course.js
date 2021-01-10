@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
+const fileService = require('../services/fileService');
 const { removeAccent } = require('../services/language');
-const Lecture = require('./Lecture');
-const Section = require('./Section');
 
 const schema = mongoose.Schema({
   name: String,
   nonAccentedName: String,
-  avatar: String,
+  avatar: { path: String, publicId: String },
+  shortDescription: String,
   description: String,
   category: {
     type: mongoose.Types.ObjectId,
@@ -55,6 +55,25 @@ schema.pre('updateOne', function (next) {
 schema.pre('save', function (next) {
   this.nonAccentedName = removeAccent(this.name);
   next();
+});
+
+schema.pre('deleteOne', async function (next) {
+  try {
+    const course = await mongoose.model('Course').findOne(this._conditions);
+    const fileDestroy = fileService.destroy(course.avatar.publicId, { invalidate: true, resource_type: 'image' });
+    const sectionsDelete = mongoose.model('Section').deleteMany({ _id: { $in: course.sections } });
+    const reviewDelete = mongoose.model('Review').deleteMany({ _id: { $in: course.reviews } });
+    const invoiceDelete = mongoose.model('Invoice').deleteMany({ course: course._id });
+
+    await fileDestroy;
+    await sectionsDelete;
+    await reviewDelete;
+    await invoiceDelete;
+    next();
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 });
 
 schema.statics.getFeatureCourses = function (limit, cb) {

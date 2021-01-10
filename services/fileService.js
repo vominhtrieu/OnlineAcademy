@@ -7,14 +7,15 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
+exports.destroy = cloudinary.uploader.destroy;
+
 exports.uploadImage = (file, cb) => {
+  if (!file.buffer) cb(new Error('File không tồn tại'));
   let uploadStream = cloudinary.uploader.upload_stream(
     {
       folder: 'images',
     },
-    function (err, result) {
-      cb(err, result);
-    }
+    cb
   );
 
   streamifier.createReadStream(file.buffer).pipe(uploadStream);

@@ -37,6 +37,7 @@ app.use('/images', express.static('images'));
 app.use('/videos', express.static('videos'));
 app.use('/', express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 
 app.use(
@@ -67,12 +68,16 @@ app.use('/', require('./routes/studentInfomation'));
 app.use('/search', require('./routes/search'));
 app.use('/', require('./routes/authentication'));
 app.use('/', require('./routes/activation'));
+app.use('/profile', require('./routes/profile'));
 
 app.use('/courses', require('./routes/studentCourse'));
 app.use('/courses', require('./routes/studentReview'));
 
 app.use('/admin', require('./routes/adminDashboard'));
 app.use('/admin/categories', require('./routes/adminCategories'));
+app.use('/admin/students', require('./routes/adminStudent'));
+app.use('/admin/lecturer', require('./routes/adminLecturer'));
+app.use('/admin/courses', require('./routes/adminCourse'));
 
 app.use('/lecturer', require('./routes/lecturerDashboard'));
 app.use('/lecturer/course', require('./routes/lecturerCourse'));

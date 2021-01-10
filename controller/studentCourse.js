@@ -1,38 +1,36 @@
 const Course = require('../models/Course');
 const Invoice = require('../models/Invoice');
+const util = require('util');
 const mongoose = require('mongoose');
 
-exports.getCourseDetail = (req, res) => {
-  Course.updateOne({ _id: req.params.id }, { $inc: { viewCount: 1 } }, (err, course) => {
-    if (err || !course) {
-      req.flash('error', 'Không tìm thấy khóa học');
-      res.redirect('/');
-    }
-    Course.getCourseDetail(new mongoose.Types.ObjectId(req.params.id), (err, course) => {
-      if (err || !course) {
-        req.flash('error', 'Không tìm thấy khóa học');
-        res.redirect('/');
-      } else {
-        if (!req.user) {
-          res.render('student/courseDetail', { course });
-        } else {
-          Invoice.findOne(
-            {
-              user: req.user._id,
-              course: course._id,
-            },
-            (err, invoice) => {
-              if (err) {
-                req.flash('error', 'Đã xảy ra lỗi');
-                res.redirect('/');
-              }
-              res.render('student/courseDetail', { course, invoice });
-            }
-          );
-        }
+const getCourseDetail = util.promisify(Course.getCourseDetail);
+
+exports.getCourseDetail = async (req, res) => {
+  try {
+    await Course.updateOne({ _id: req.params.id }, { $inc: { viewCount: 1 } });
+    const course = await getCourseDetail(new mongoose.Types.ObjectId(req.params.id));
+    if (!req.user) {
+      res.render('student/courseDetail', { course });
+    } else {
+      const invoice = await Invoice.findOne({
+        user: req.user._id,
+        course: course._id,
+      });
+
+      const userReview = course.reviews.find((review) => review.writer._id.equals(req.user._id));
+      if (userReview) {
+        course.reviews = course.reviews.filter((review) => review != userReview);
       }
-    });
-  });
+
+      const isFavorite = req.user.favoriteCourses.find((course) => course.toString() === req.params.id);
+
+      res.render('student/courseDetail', { course, invoice, userReview, isFavorite });
+    }
+  } catch (e) {
+    console.log(e);
+    req.flash('error', 'Không tìm thấy khóa học');
+    res.redirect('/');
+  }
 };
 
 exports.enrollCourse = (req, res) => {

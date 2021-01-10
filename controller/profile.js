@@ -1,3 +1,4 @@
+const Course = require('../models/Course');
 const User = require('../models/User');
 
 exports.getProfile = (_req, res) => {
@@ -34,5 +35,30 @@ exports.changePassword = async (req, res) => {
     req.flash('error', 'Thông tin đã nhập không hợp lệ');
   } finally {
     res.redirect('back');
+  }
+};
+
+exports.addCourseToFavoriteList = async (req, res) => {
+  try {
+    const course = await Course.findById(req.body.courseId);
+    if (!course) req.flash('error', 'Không tìm thấy khóa học');
+    else {
+      await User.updateOne({ _id: req.user._id }, { $push: { favoriteCourses: course._id } });
+      req.flash('info', 'Đã thêm vào danh sách yêu thích');
+    }
+  } catch (e) {
+    req.flash('error', 'Xảy ra lỗi khi thêm vào danh sách yêu thích');
+  } finally {
+    res.redirect('back');
+  }
+};
+
+exports.removeCourseFromFavoriteList = async (req, res) => {
+  try {
+    await User.updateOne({ _id: req.user._id }, { $pull: { favoriteCourses: req.body.courseId } });
+    req.flash('info', 'Đã xóa khỏi danh sách yêu thích');
+    res.redirect('back');
+  } catch (e) {
+    req.flash('error', 'Không thể xóa khỏi danh sách yêu thích');
   }
 };

@@ -13,10 +13,7 @@ const schema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  accepted: {
-    type: Boolean,
-    default: false,
-  },
+  favoriteCourses: [{ type: mongoose.Types.ObjectId, ref: 'Course' }],
 });
 
 schema.plugin(passportLocalMongoose, { usernameField: 'email' });

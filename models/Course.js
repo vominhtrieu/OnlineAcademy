@@ -77,17 +77,50 @@ schema.pre('deleteOne', async function (next) {
 });
 
 schema.statics.getFeatureCourses = function (limit, cb) {
-  const query = this;
-  query
-    .find({})
-    .sort({ studentCount: -1 })
-    .limit(limit)
-    .populate('lecturer')
+  const current = new Date();
+  current.setDate(current.getDate() - 7);
+  mongoose
+    .model('Invoice')
+    .aggregate([
+      { $match: { date: { $gte: current } } },
+      { $group: { _id: '$course', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'course',
+        },
+      },
+      {
+        $unwind: { path: '$course' },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'course.lecturer',
+          foreignField: '_id',
+          as: 'course.lecturer',
+        },
+      },
+      {
+        $unwind: { path: '$course.lecturer' },
+      },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'course.reviews',
+          foreignField: '_id',
+          as: 'course.reviews',
+        },
+      },
+      {
+        $unwind: { path: '$course.reviews', preserveNullAndEmptyArrays: true },
+      },
+    ])
     .exec((err, courses) => {
-      courses.forEach((course) => {
-        course.lecturerName = course.lecturer.fullName;
-        course.lecturer = null;
-      });
       cb(err, courses);
     });
 };
@@ -132,7 +165,9 @@ schema.statics.getMostViewCourses = function (limit, cb) {
 };
 
 schema.statics.getCourseDetail = function (id, cb) {
-  this.findById(id)
+  mongoose
+    .model('Course')
+    .findById(id)
     .populate('lecturer')
     .populate({
       path: 'sections',

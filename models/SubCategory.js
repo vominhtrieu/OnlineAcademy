@@ -13,4 +13,6 @@ const schema = mongoose.Schema({
 
 schema.index({ name: 'text' });
 
+schema.statics.getMostEnrolledCategory;
+
 module.exports = mongoose.model('SubCategory', schema);

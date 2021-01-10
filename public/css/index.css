@@ -12,18 +12,14 @@ body {
   position: relative;
 }
 
-.carousel-item {
-  height: 360px;
-  height: 640px;
-}
-
-.carousel-item > img {
-  position: absolute;
-  top: 0;
-  left: 0;
+.carousel-inner > .carousel-item > img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  object-fit: cover;
+  line-height: 1;
+  margin: auto;
   width: 100%;
-  object-fit: fill;
-  object-position: center;
 }
 
 .rating-bar {

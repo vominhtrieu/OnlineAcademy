@@ -1,0 +1,5 @@
+<div class="course-carousel row">
+  <% mostViewCourses.forEach(course => { %>
+  <div class="col-3 mb-4"><%- include("course", {course}) %></div>
+  <% }); %>
+</div>

@@ -41,3 +41,11 @@ body {
 textarea.form-control {
   resize: none;
 }
+
+.course-carousel {
+  display: flex;
+}
+
+.course-carousel-item {
+  width: 300px;
+}

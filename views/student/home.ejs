@@ -30,10 +30,6 @@
   </div>
 
   <h5 class="mt-4">Khóa học được xem nhiều nhất</h5>
-  <div class="row">
-    <% mostViewCourses.forEach(course => { %>
-    <div class="col-sm-3"><%- include("partials/course", {course}), %></div>
-    <% }); %>
-  </div>
+  <%- include('./partials/coursesCarousel', {mostViewCourses}) %>
 </div>
 <%- include('../partials/footer.ejs') %>

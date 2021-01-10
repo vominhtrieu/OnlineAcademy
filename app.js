@@ -69,6 +69,7 @@ app.use('/search', require('./routes/search'));
 app.use('/', require('./routes/authentication'));
 app.use('/', require('./routes/activation'));
 app.use('/profile', require('./routes/profile'));
+app.use('/categories', require('./routes/categories'));
 
 app.use('/courses', require('./routes/studentCourse'));
 app.use('/courses', require('./routes/studentReview'));

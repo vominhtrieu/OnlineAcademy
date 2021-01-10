@@ -1,0 +1,64 @@
+<%- include ('partials/header.ejs', {title: `Lĩnh vực ${category.name}"`, css: []}) %> <%- include
+('partials/navbar.ejs') %>
+
+<div class="container">
+  <div class="card mt-3 border-0 shadow-sm">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0">Lĩnh vực <%=category.name%></h5></div>
+    <div class="card-body">
+      <% if (courses.length === 0) { %>
+      <p>Hiện lĩnh vực này chưa có khóa học</p>
+      <% } else { %>
+      <div>
+        <% courses.forEach(course => { %>
+        <div class="d-flex border-bottom mb-2 py-2">
+          <img class="rounded mr-3" width="250px" src="<%=course.avatar.path%>" alt="" />
+          <div>
+            <h5 class="mb-0"><a href="/courses/<%=course._id%>"><%= course.name %></a></h5>
+            <p class="mb-0"><%= course.lecturer.fullName %></p>
+            <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
+            <span class="fa fa-star checked"></span>
+            <% } else { %>
+            <span class="fa fa-star"></span>
+            <% }} %>
+            <span>(<%=course.studentCount%>)</span>
+            <% } else { %>
+            <p class="mb-0">Chưa có người đánh giá</p>
+            <% } %>
+            <p><%= course.studentCount %> học viên</p>
+          </div>
+        </div>
+        <% }); %>
+        <nav>
+          <ul class="pagination">
+            <% if (page > 0) { %>
+            <li class="page-item">
+              <a class="page-link" href="/categories/<%=category._id%>?page=<%=page-1%>">Trước</a>
+            </li>
+            <% } else { %>
+            <li class="page-item disabled">
+              <a class="page-link" href="#">Trước</a>
+            </li>
+            <% } %> <% pages.forEach(index => { %> <% if (index === page){ %>
+            <li class="page-item active"><a class="page-link"><%=index + 1%></a></li>
+            <% }else {%>
+            <li class="page-item">
+              <a class="page-link" href="/categories/<%=category._id%>?page=<%=index%>"><%=index + 1%></a>
+            </li>
+            <% }}) %> <% if (page < length - 1) { %>
+            <li class="page-item">
+              <a class="page-link" href="/categories/<%=category._id%>?page=<%=page+1%>">Tiếp theo</a>
+            </li>
+            <% } else { %>
+            <li class="page-item disabled">
+              <a class="page-link" href="#">Tiếp theo</a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+      <%}%>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/footer.ejs') %>

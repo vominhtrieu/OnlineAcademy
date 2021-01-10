@@ -194,6 +194,40 @@ schema.statics.getCourseDetail = function (id, cb) {
     });
 };
 
+schema.statics.getMultipleCourseDetail = function (condition, skip, limit, cb) {
+  mongoose
+    .model('Course')
+    .find(condition)
+    .populate('lecturer')
+    .populate({
+      path: 'sections',
+      populate: {
+        path: 'lectures',
+      },
+    })
+    .populate({
+      path: 'reviews',
+      populate: {
+        path: 'writer',
+      },
+    })
+    .skip(skip)
+    .limit(limit)
+    .exec((err, courses) => {
+      courses.forEach((course) => {
+        let rating = 0;
+        if (course.reviews.length !== 0) {
+          course.reviews.forEach((review) => {
+            rating += review.score;
+          });
+          rating /= course.reviews.length;
+        }
+        course.rating = rating;
+      });
+      cb(err, courses);
+    });
+};
+
 schema.statics.getLecture = function (courseId, sectionNo, lectureNo, cb) {
   //Only populate require field, so the query will be more efficient
   this.findById(courseId).exec((err, course) => {

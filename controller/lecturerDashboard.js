@@ -1,7 +1,7 @@
 const Course = require('../models/Course');
 
-exports.getDashboard = (_req, res) => {
-  Course.find({})
+exports.getDashboard = (req, res) => {
+  Course.find({ lecturer: req.user._id })
     .populate('category')
     .exec((err, courses) => {
       if (err) console.log(err);

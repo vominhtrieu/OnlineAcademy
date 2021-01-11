@@ -112,8 +112,6 @@ exports.addNewCourse = (req, res) => {
 };
 
 exports.addNewSection = (req, res) => {
-  console.log(req.body);
-  //Find course by its id and check if its lecturer is current user
   Section.create({ name: req.body.name }, (err, section) => {
     if (err) {
       req.flash('error', 'Không thể thêm chương này');
@@ -194,7 +192,6 @@ exports.addNewLecture = (req, res) => {
 
 exports.updateCourse = async (req, res) => {
   try {
-    console.log(req.body);
     const updateData = {
       name: req.body.name,
       category: req.body.category,

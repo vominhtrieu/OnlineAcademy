@@ -15,12 +15,13 @@
           <div>
             <h5 class="mb-0"><a href="/courses/<%=course._id%>"><%= course.name %></a></h5>
             <p class="mb-0"><%= course.lecturer.fullName %></p>
+            <h6><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
             <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
             <span class="fa fa-star checked"></span>
             <% } else { %>
             <span class="fa fa-star"></span>
             <% }} %>
-            <span>(<%=course.studentCount%>)</span>
+            <span>(<%=course.reviews.length%>)</span>
             <% } else { %>
             <p class="mb-0">Chưa có người đánh giá</p>
             <% } %>

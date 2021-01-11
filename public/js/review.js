@@ -1,9 +1,3 @@
-const stars = $('.fa-star');
-const scoreInput = $('#scoreInput');
-const scoreMessage = $('#scoreMessage');
-
-const scoreMessages = ['Rất tệ', 'Tệ', 'Ổn', 'Khá tốt', 'Tuyệt vời'];
-
 stars.hover(function () {
   const score = +$(this).attr('data-score');
   scoreInput.val(score);

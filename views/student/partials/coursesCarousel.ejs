@@ -1,5 +1,28 @@
-<div class="course-carousel row">
-  <% mostViewCourses.forEach(course => { %>
-  <div class="col-3 mb-4"><%- include("course", {course}) %></div>
-  <% }); %>
+<div class="course-carousel row px-3">
+  <div class="swiper-container h-100">
+    <div class="swiper-wrapper">
+      <% mostViewCourses.forEach(course => { %>
+      <div class="swiper-slide mb-1">
+        <img class="rounded" src="<%= course.avatar.path %>" alt="Card image cap" />
+
+        <a href="/courses/<%=course._id%>">
+          <h6 class="card-title"><%= course.name %></h6>
+        </a>
+        <h6 class="card-subtitle mb-1 font-weight-light"><%= course.lecturerName %></h6>
+        <div class="rating-bar">
+          <% for (let i=0; i < 5; i++) { %>
+          <span class="fa fa-star <%= i < 3 ? ' checked' : '' %>"></span>
+          <% } %>
+          <span>(100) </span>
+        </div>
+        <% if (course.price) { %>
+        <h6 class="card-text"><%= new Intl.NumberFormat('de-DE').format(course.price) %> ₫</h6>
+        <% } %>
+      </div>
+      <% }); %>
+    </div>
+
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
 </div>

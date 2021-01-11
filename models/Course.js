@@ -194,36 +194,74 @@ schema.statics.getCourseDetail = function (id, cb) {
     });
 };
 
-schema.statics.getMultipleCourseDetail = function (condition, skip, limit, cb) {
+schema.statics.getMultipleCourseDetail = function (condition, skip, limit, sort, cb) {
+  let sortOption = { name: 1 };
+  if (sort === 'price') {
+    sortOption = { price: 1 };
+  } else if (sort === 'rating') {
+    sortOption = { rating: -1 };
+  }
+
   mongoose
     .model('Course')
-    .find(condition)
-    .populate('lecturer')
-    .populate({
-      path: 'sections',
-      populate: {
-        path: 'lectures',
+    .aggregate([
+      { $match: condition },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'reviews',
+          foreignField: '_id',
+          as: 'reviews',
+        },
       },
-    })
-    .populate({
-      path: 'reviews',
-      populate: {
-        path: 'writer',
+      {
+        $project: {
+          name: 1,
+          avatar: 1,
+          reviews: 1,
+          lecturer: 1,
+          sections: 1,
+          price: 1,
+          category: 1,
+          studentCount: 1,
+          rating: { $avg: '$reviews.score' },
+        },
       },
-    })
-    .skip(skip)
-    .limit(limit)
+      {
+        $sort: sortOption,
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'lecturer',
+          foreignField: '_id',
+          as: 'lecturer',
+        },
+      },
+      {
+        $unwind: {
+          path: '$lecturer',
+        },
+      },
+      {
+        $lookup: {
+          from: 'sections',
+          localField: 'sections',
+          foreignField: '_id',
+          as: 'sections',
+        },
+      },
+    ])
     .exec((err, courses) => {
-      courses.forEach((course) => {
-        let rating = 0;
-        if (course.reviews.length !== 0) {
-          course.reviews.forEach((review) => {
-            rating += review.score;
-          });
-          rating /= course.reviews.length;
-        }
-        course.rating = rating;
-      });
+      if (err) {
+        console.log(err);
+      }
       cb(err, courses);
     });
 };

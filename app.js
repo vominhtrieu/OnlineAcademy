@@ -28,6 +28,7 @@ mongoose.connect(
 
       process.exit();
     }
+    console.log('Connected to database');
   }
 );
 

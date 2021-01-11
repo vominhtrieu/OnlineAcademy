@@ -31,3 +31,27 @@ exports.addNewReview = (req, res) => {
     }
   );
 };
+
+exports.updateReview = async (req, res) => {
+  try {
+    console.log(req.params.reviewId, req.body);
+    await Review.updateOne({ _id: req.params.reviewId, writer: req.user._id }, req.body);
+    req.flash('info', 'Đã cập nhật nhận xét thành công');
+  } catch (e) {
+    req.flash('error', 'Không thể cập nhật nhận xét này');
+  } finally {
+    res.redirect('back');
+  }
+};
+
+exports.deleteReview = async (req, res) => {
+  try {
+    await Review.deleteOne({ _id: req.params.reviewId, writer: req.user._id });
+    await Course.updateOne({ _id: req.params.courseId }, { $pull: { reviews: req.params.reviewId } });
+    req.flash('info', 'Đã xóa xét thành công');
+  } catch (e) {
+    req.flash('error', 'Không thể xóa nhận xét này');
+  } finally {
+    res.redirect('back');
+  }
+};

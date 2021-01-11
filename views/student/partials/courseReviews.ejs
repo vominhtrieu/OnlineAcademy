@@ -13,13 +13,27 @@
       <p><%= userReview.message %></p>
     </div>
     <div class="card-footer">
-      <button class="btn btn-primary">Chỉnh sửa</button>
-      <button class="btn btn-danger">Xóa</button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        data-toggle="modal"
+        data-target="#reviewModal"
+        onclick="setActionReviewFrom('/courses/<%=course._id%>/review/<%=userReview._id%>?_method=PUT', <%= userReview.score %>, '<%= userReview.message %>')"
+      >
+        Chỉnh sửa
+      </button>
+      <button class="btn btn-danger" data-toggle="modal" data-target="#deleteReviewModal">Xóa</button>
     </div>
   </div>
-  <% } else { %>
+  <% } else if (invoice) { %>
   <div class="w-100 mb-2">
-    <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#reviewModal">
+    <button
+      class="btn btn-primary"
+      type="button"
+      data-toggle="modal"
+      data-target="#reviewModal"
+      onclick="setActionReviewFrom('/courses/<%=course._id%>/review')"
+    >
       <i class="fa fa-pen-alt mr-2"></i>Viết bài đánh giá
     </button>
   </div>

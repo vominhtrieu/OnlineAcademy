@@ -192,39 +192,27 @@ exports.addNewLecture = (req, res) => {
   });
 };
 
-exports.updateCourse = (req, res) => {
-  const updateData = {
-    name: req.body.name,
-    category: req.body.category,
-    price: req.body.price,
-    discount: req.body.discount,
-    description: req.body.description,
-    shortDescription: req.body.shortDescription,
-  };
-
-  //Find course by its id and check if its lecturer is current user
-  const updateFunc = () => {
-    Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData, (err, course) => {
-      if (err || !course) {
-        req.flash('error', 'Không thể chỉnh sửa khóa học này');
-      } else {
-        req.flash('info', 'Chỉnh sửa khóa học thành công');
-      }
-      res.redirect(`/lecturer/course/${req.params.id}`);
-    });
-  };
-
-  if (req.file) {
-    fileService.uploadImage(req.file, (err, image) => {
-      if (err) {
-        req.flash('error', 'Không thể tải ảnh lên server');
-        return res.redirect('back');
-      }
+exports.updateCourse = async (req, res) => {
+  try {
+    console.log(req.body);
+    const updateData = {
+      name: req.body.name,
+      category: req.body.category,
+      price: +req.body.price,
+      discount: req.body.discount,
+      description: req.body.description,
+      shortDescription: req.body.shortDescription,
+    };
+    if (req.file) {
+      const image = await fileService.uploadImage(req.file);
       updateData.avatar = { path: image.secure_url, publicId: image.public_id };
-      updateFunc();
-    });
-  } else {
-    updateFunc();
+    }
+    await Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData);
+    req.flash('info', 'Chỉnh sửa khóa học thành công');
+  } catch (e) {
+    req.flash('error', 'Không thể chỉnh sửa khóa học này');
+  } finally {
+    res.redirect('back');
   }
 };
 

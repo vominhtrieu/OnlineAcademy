@@ -10,13 +10,18 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <% if (currentUser) { %>
+      <% if (currentUser.active) { %>
       <div class="modal-body">Bạn có chắc muốn tham gia khóa học này?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
         <form method="POST" action="/courses/<%=course._id%>/enroll">
           <button type="submit" class="btn btn-primary">Xác nhận</button>
         </form>
+      </div>
+      <% } else if (currentUser) { %>
+      <div class="modal-body">Bạn chưa kích hoạt tài khoản</div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary">Ok</button>
       </div>
       <% } else { %>
       <div class="modal-body">Bạn chưa đăng nhập, hãy đăng nhập để tham gia khóa học</div>
@@ -38,7 +43,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="POST" action="/courses/<%=course._id%>/review">
+      <form id="reviewForm" method="POST" action="/courses/<%=course._id%>/review">
         <div class="modal-body">
           <input id="scoreInput" class="d-none" type="number" name="score" value="5" />
           <div class="rating-bar-lg mb-4 d-flex align-items-center">
@@ -62,6 +67,32 @@
   </div>
 </div>
 
+<% if (userReview) { %>
+<div class="modal fade" id="deleteReviewModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xóa đánh giá</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="reviewForm" method="POST" action="/courses/<%=course._id%>/review/<%=userReview._id%>?_method=DELETE">
+        <div class="modal-body">
+          <p>Bạn có chắc muốn xóa đánh giá này?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <form action="/courses/<%=course._id%>/review/<%= userReview._id %>?_method=DELETE" method="POST">
+            <button type="submit" class="btn btn-danger">Xác nhận</button>
+          </form>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>
+
 <div class="container mt-3">
   <%- include ('../partials/messageAlert.ejs') %>
   <div class="card border-0 shadow-sm">
@@ -76,12 +107,13 @@
 
           <% if (course.rating > 0) { %>
           <div>
+            <span class="checked font-weight-bold"><%= course.rating %> </span>
             <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
             <span class="fa fa-star checked"></span>
             <% } else { %>
             <span class="fa fa-star"></span>
             <% }} %>
-            <span>(<%= userReview ? course.reviews.length + 1 : course.reviews.length %>)</span>
+            <span>(<%= locals.userReview ? course.reviews.length + 1 : course.reviews.length %>)</span>
           </div>
           <% } else { %>
           <p class="mb-1">Chưa có người đánh giá</p>
@@ -123,7 +155,9 @@
   <div class="card border-top-0 tab-body">
     <div class="card-body">
       <div id="syllabus-tab"><%- include('./partials/syllabus', {course}) %></div>
-      <div id="review-tab"><%- include('./partials/courseReviews', {course, userReview}) %></div>
+      <div id="review-tab">
+        <%- include('./partials/courseReviews', {course, userReview: locals.userReview, invoice}) %>
+      </div>
     </div>
   </div>
 </div>
@@ -132,4 +166,5 @@
   src="https://cdn.tiny.cloud/1/s9g2wvhjas0t1gx4fozjrktqpilnrp362xmamalr5ra9tddi/tinymce/5/tinymce.min.js"
   referrerpolicy="origin"
 ></script>
-<%- include('../partials/footer.ejs', {scripts: ["courseSection", "review", "tabs"]}) %>
+
+<%- include('../partials/footer.ejs', {scripts: ["courseDetail", "courseSection", "review", "tabs"]}) %>

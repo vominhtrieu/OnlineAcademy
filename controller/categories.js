@@ -1,6 +1,7 @@
 const Course = require('../models/Course');
 const SubCategory = require('../models/SubCategory');
 const util = require('util');
+const mongoose = require('mongoose');
 const LIMIT = 1;
 
 const getMultipleCourseDetail = util.promisify(Course.getMultipleCourseDetail);
@@ -10,7 +11,12 @@ exports.getCoursesInCategory = async (req, res) => {
     const page = req.query.page ? +req.query.page : 0;
     const category = await SubCategory.findById(req.params.id);
     const waitForLength = Course.find({ category: req.params.id });
-    const waitForDetailCourse = getMultipleCourseDetail({ category: req.params.id }, page * LIMIT, LIMIT);
+    const waitForDetailCourse = getMultipleCourseDetail(
+      { category: new mongoose.Types.ObjectId(req.params.id) },
+      page * LIMIT,
+      LIMIT,
+      'rating'
+    );
 
     const length = Math.ceil((await waitForLength).length / LIMIT);
     const courses = await waitForDetailCourse;

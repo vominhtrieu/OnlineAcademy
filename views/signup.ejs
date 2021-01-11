@@ -34,41 +34,55 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 </div>
-                <input type="text" name="email" id="email" placeholder="Email" class="form-control" aria-describedby="helpId" />
+                <input
+                  type="text"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
               </div>
 
               <div class="input-group my-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-user"></i></span>
                 </div>
-                <input type="text" name="fullName" id="full-name" placeholder="Họ và tên" class="form-control" aria-describedby="helpId" />
+                <input
+                  type="text"
+                  name="fullName"
+                  id="full-name"
+                  placeholder="Họ và tên"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
               </div>
 
               <div class="input-group my-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-lock"></i></span>
                 </div>
-                <input type="password" name="password" id="password" placeholder="Mật khẩu" class="form-control" aria-describedby="helpId" />
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  placeholder="Mật khẩu"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
               </div>
 
               <div class="input-group my-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-lock"></i></span>
                 </div>
-                <input type="password" id="retype-password" placeholder="Nhập lại mật khẩu" class="form-control" aria-describedby="helpId" />
-              </div>
-
-              <input class="d-none" type="text" name="role" value="student" />
-
-              <div class="mb-3">
-                <div class="row">
-                  <div class="col pr-1">
-                    <button onclick="setRole('student')" type="button" class="w-100 btn btn-primary" id="student-select">Học viên</button>
-                  </div>
-                  <div class="col pl-1">
-                    <button onclick="setRole('lecturer')" type="button" class="w-100 btn btn-outline-primary" id="lecturer-select">Giảng viên</button>
-                  </div>
-                </div>
+                <input
+                  type="password"
+                  id="retype-password"
+                  placeholder="Nhập lại mật khẩu"
+                  class="form-control"
+                  aria-describedby="helpId"
+                />
               </div>
 
               <button id="submit-btn" class="btn btn-primary mt-2">Đăng ký</button>
@@ -80,7 +94,13 @@
               <div class="line-separator"></div>
             </div>
 
-            <div class="g-signin2" data-width="370" data-longtitle="true" data-onsuccess="onSignIn" data-theme="dark"></div>
+            <div
+              class="g-signin2"
+              data-width="370"
+              data-longtitle="true"
+              data-onsuccess="onSignIn"
+              data-theme="dark"
+            ></div>
           </div>
         </div>
       </div>

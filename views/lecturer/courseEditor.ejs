@@ -156,7 +156,7 @@
   let avatar = '<%=course.avatar.path %>';
 
   if (avatar) {
-    imageSelector.style.backgroundImage = `url("${avatar}")`;
+    imageSelector.style.backgroundImage = `url("/images/${avatar}")`;
     imageSelector.children[0].style.display = 'none';
   }
   function triggerFileInput() {

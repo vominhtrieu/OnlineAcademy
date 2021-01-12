@@ -17,8 +17,9 @@
             controls
             autoplay
             data-setup="{}"
+            data-start="<%=record?record.complete:0%>"
           >
-            <source src="/videos/<%= lecture.video %>" type="video/<%= lecture.extension %>" />
+            <source src="/videos/<%= lecture.video.path %>" type="video/<%= lecture.video.extension %>" />
             <p class="vjs-no-js">
               To view this video please enable JavaScript, and consider upgrading to a web browser that
               <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
@@ -60,12 +61,13 @@
             </li>
             <li class="list-group-item" data-toggle="<%= sectionNo === lecture.sectionNo%>">
               <ul class="list-unstyled">
-                <% section.lectures.forEach(({name}, lectureNo) => { %> <% if (sectionNo !== lecture.sectionNo ||
-                lectureNo !== lecture.lectureNo) { %>
+                <% section.lectures.forEach(({name, completed}, lectureNo) => { %> <% if (sectionNo !==
+                lecture.sectionNo || lectureNo !== lecture.lectureNo) { %>
                 <li class="pl-4">
                   <a class="text-dark" href="/courses/<%=course._id%>/sections/<%=sectionNo%>/lectures/<%=lectureNo%>"
-                    ><%= name %></a
-                  >
+                    ><%= name %> <% if (completed) { %> <i class="fa fa-check"></i
+                  ></a>
+                  <% } %>
                 </li>
                 <% } else { %>
                 <li class="text-primary d-flex">
@@ -85,63 +87,34 @@
 
 <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
 <script>
-  var player = videojs(document.querySelector('video'), {});
-  try {
-    player.volume(1);
-  } catch (e) {}
+  const video = document.querySelector('video');
+  let start = video.dataset.start;
 
-  document.querySelector('.previous').addEventListener('click', function () {
-    player.playlist.previous();
-  });
-  document.querySelector('.next').addEventListener('click', function () {
-    player.playlist.next();
-  });
-  document.querySelector('.jump').addEventListener('click', function () {
-    player.playlist.currentItem(2); // play third
-    player.play();
-  });
+  video.onloadedmetadata = function () {
+    if (start && start !== '') {
+      start = +start;
+      console.log(start, this.duration);
+      console.log(Math.floor(start * this.duration));
+      player.currentTime(Math.floor(start * this.duration));
+    }
+  };
 
-  player.playlist.autoadvance(0); // play all
+  var player = videojs(video, {});
 
-  Array.prototype.forEach.call(document.querySelectorAll('[name=autoadvance]'), function (el) {
-    el.addEventListener('click', function () {
-      var value = document.querySelector('[name=autoadvance]:checked').value;
-      //alert(value);
-      player.playlist.autoadvance(JSON.parse(value));
-    });
-  });
+  let currentTime = 0;
 
-  var Button = videojs.getComponent('Button');
-
-  var PrevButton = videojs.extend(Button, {
-    constructor: function () {
-      Button.apply(this, arguments);
-      this.addClass('vjs-icon-previous-item');
-      this.controlText('Previous');
-    },
-
-    handleClick: function () {
-      console.log('click');
-      player.playlist.previous();
-    },
-  });
-
-  var NextButton = videojs.extend(Button, {
-    constructor: function () {
-      Button.apply(this, arguments);
-      this.addClass('vjs-icon-next-item');
-      this.controlText('Next');
-    },
-
-    handleClick: function () {
-      console.log('click');
-      player.playlist.next();
-    },
-  });
-
-  videojs.registerComponent('NextButton', NextButton);
-  videojs.registerComponent('PrevButton', PrevButton);
-  player.getChild('controlBar').addChild('PrevButton', {}, 0);
-  player.getChild('controlBar').addChild('NextButton', {}, 2);
+  setInterval(() => {
+    if (player.currentTime() !== currentTime) {
+      currentTime = player.currentTime();
+      console.log(currentTime);
+      fetch('/courses/<%=course._id%>/records', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ lectureId: '<%=lecture._id %>', complete: currentTime / player.duration() }),
+      }).then();
+    }
+  }, 10000);
 </script>
 <%- include('../partials/footer.ejs', {scripts: ["courseSection"]}) %>

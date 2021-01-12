@@ -2,7 +2,7 @@
 <%-include("../partials/navbar") %>
 <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
 
-<div class="modal fade" id="new-lecture-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="lecture-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -44,6 +44,26 @@
   </div>
 </div>
 
+<div class="modal fade" id="delete-lecture-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xoá bài giảng</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" enctype="multipart/form-data">
+        <div class="modal-body">Bạn có chắc chắn muốn xóa bài giảng này</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-danger">Có</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="container mt-4">
   <% if (error.length > 0) { %>
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -65,7 +85,7 @@
     <div class="card-header bg-primary d-flex align-items-center py-1">
       <h5 class="text-white m-0">Chỉnh sửa nội dung chương <%= section.name %></h5>
       <span class="ml-auto">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#new-lecture-modal">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#lecture-modal">
           <i class="fa fa-plus fa-lg"></i>
         </button>
       </span>
@@ -73,10 +93,27 @@
     <ul class="list-group border-0">
       <% section.lectures.forEach(lecture => { %>
       <li class="list-group-item py-1 pl-3 pr-1 d-flex align-items-center">
-        <a href="#"><%= lecture.name %></a>
+        <span><%= lecture.name %></span>
         <div class="ml-auto">
-          <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
-          <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+          <button
+            class="btn btn-primary"
+            data-action="<%= section._id %>/lecture/<%=lecture._id%>?_method=PUT"
+            data-toggle="modal"
+            data-target="#lecture-modal"
+            data-name="<%=lecture.name%>"
+            data-video-path="<%=lecture.video.path%>"
+            data-video-extension="<%=lecture.video.extension%>"
+          >
+            <i class="fa fa-edit"></i>
+          </button>
+          <button
+            class="btn btn-danger"
+            data-toggle="modal"
+            data-target="#delete-lecture-modal"
+            data-action="<%= section._id %>/lecture/<%=lecture._id%>?_method=DELETE"
+          >
+            <i class="fa fa-trash"></i>
+          </button>
         </div>
       </li>
       <% }); %>
@@ -85,24 +122,4 @@
 </div>
 
 <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
-<script>
-  const videoInput = document.getElementById('video-input');
-  const videoSelectorToggler = document.getElementById('video-selector-toggler');
-  const filenameLabel = document.getElementById('file-name-label');
-  videoInput.addEventListener('change', (e) => {
-    if (e.target.files) {
-      const file = e.target.files[0];
-      const url = window.URL.createObjectURL(file);
-      filenameLabel.textContent = file.name;
-      videojs('video-preview').src({
-        type: `video/${file.name.split('.').pop()}`,
-        src: url,
-      });
-    }
-  });
-
-  videoSelectorToggler.addEventListener('click', (e) => {
-    videoInput.click();
-  });
-</script>
-<%- include("../partials/footer") %>
+<%- include("../partials/footer", {scripts: ['lectureEdit','modal']}) %>

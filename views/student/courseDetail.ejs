@@ -10,7 +10,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <% if (currentUser.active) { %>
+      <% if (currentUser && currentUser.active) { %>
       <div class="modal-body">Bạn có chắc muốn tham gia khóa học này?</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
@@ -67,7 +67,7 @@
   </div>
 </div>
 
-<% if (userReview) { %>
+<% if (locals.userReview) { %>
 <div class="modal fade" id="deleteReviewModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -99,7 +99,7 @@
     <div class="card-body">
       <div class="row">
         <div class="col-md-6 col-12">
-          <img class="w-100 rounded" src="<%=course.avatar.path%>" />
+          <img class="w-100 rounded" src="/images/<%=course.avatar%>" />
         </div>
         <div class="col-md-6 col-12">
           <h2><%= course.name %></h2>
@@ -118,6 +118,7 @@
           <% } else { %>
           <p class="mb-1">Chưa có người đánh giá</p>
           <% } %>
+          <p class="mb-1">Cập nhật lần cuối vào <%= moment(course.lastUpdate).fromNow() %></p>
           <p class="mb-1"><%= course.viewCount %> lượt xem</p>
           <p><%= course.studentCount %> người học</p>
           <% if (!locals.invoice) { %>
@@ -126,7 +127,7 @@
           </button>
           <% } else { %>
           <div class="d-flex mt-2">
-            <a href="/courses/<%=course._id%>/sections/1/lectures/1" class="btn btn-primary mr-1">Vào học</a>
+            <a href="/courses/<%=course._id%>/learn" class="btn btn-primary mr-1">Vào học</a>
             <% if (!isFavorite) { %>
             <form method="POST" action="/profile/favorite">
               <input class="d-none" type="text" name="courseId" value="<%= course._id%>" />
@@ -156,7 +157,7 @@
     <div class="card-body">
       <div id="syllabus-tab"><%- include('./partials/syllabus', {course}) %></div>
       <div id="review-tab">
-        <%- include('./partials/courseReviews', {course, userReview: locals.userReview, invoice}) %>
+        <%- include('./partials/courseReviews', {course, userReview: locals.userReview, invoice:locals.invoice}) %>
       </div>
     </div>
   </div>

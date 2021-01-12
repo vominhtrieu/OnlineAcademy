@@ -3,16 +3,19 @@ const Course = require('../models/Course');
 const Section = require('../models/Section');
 const Lecture = require('../models/Lecture');
 const SubCategory = require('../models/SubCategory');
-const fileService = require('../services/fileService');
+
+const updateCourseDate = async (courseId) => {
+  await Course.updateOne({ _id: courseId }, { lastUpdate: Date.now() });
+};
 
 exports.getAddNewCourseView = (_req, res) => {
   res.render('lecturer/newCourse');
 };
 
 exports.getCourseDetailView = (req, res) => {
-  Course.getCourseDetail(req.params.id, (err, course) => {
+  Course.getCourseDetail(req.params.courseId, (err, course) => {
     if (err || !course) {
-      req.flash('error', `Không tìm thấy khóa học với id là ${req.params.id}`);
+      req.flash('error', `Không tìm thấy khóa học với id là ${req.params.courseId}`);
       res.redirect('/lecturer');
     } else {
       res.render('lecturer/courseDetail', { course });
@@ -21,11 +24,11 @@ exports.getCourseDetailView = (req, res) => {
 };
 
 exports.getCourseEditorView = (req, res) => {
-  Course.findById(req.params.id)
+  Course.findById(req.params.courseId)
     .populate('category')
     .exec((err, course) => {
       if (err || !course) {
-        req.flash('error', `Không tìm thấy khóa học với id là ${req.params.id}`);
+        req.flash('error', `Không tìm thấy khóa học với id là ${req.params.courseId}`);
         res.redirect('/lecturer');
       } else {
         res.render('lecturer/courseEditor', { course });
@@ -36,19 +39,21 @@ exports.getCourseEditorView = (req, res) => {
 exports.deleteSection = async (req, res) => {
   try {
     await Section.deleteOne({ _id: req.params.sectionId });
-    req.flash('Đã xóa chương');
+    updateCourseDate(req.params.courseId);
+    req.flash('info', 'Đã xóa chương');
   } catch (e) {
-    req.flash('Xảy ra lỗi khi xóa chương');
+    console.log(e);
+    req.flash('error', 'Xảy ra lỗi khi xóa chương');
   }
-  res.redirect(`/course/${req.params.courseId}`);
+  res.redirect(`back`);
 };
 
 exports.getSectionsView = (req, res) => {
-  Course.findById(req.params.id)
+  Course.findById(req.params.courseId)
     .populate('sections')
     .exec((err, course) => {
       if (err || !course) {
-        req.flash('error', `Không tìm thấy khóa học với id là ${req.params.id}`);
+        req.flash('error', `Không tìm thấy khóa học với id là ${req.params.courseId}`);
         res.redirect('/lecturer');
       } else {
         res.render('lecturer/courseSections', { course });
@@ -62,7 +67,7 @@ exports.getSectionView = (req, res) => {
     .exec((err, section) => {
       if (err || !section) {
         console.log(err);
-        req.flash('error', `Không tìm thấy chương với id là ${req.params.id}`);
+        req.flash('error', `Không tìm thấy chương với id là ${req.params.courseId}`);
         res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
       } else {
         res.render('lecturer/courseSection', { section });
@@ -70,55 +75,47 @@ exports.getSectionView = (req, res) => {
     });
 };
 
-exports.addNewCourse = (req, res) => {
-  SubCategory.findById(new mongoose.Types.ObjectId(req.body.category), async (err, category) => {
-    if (err || !category) {
-      req.flash('error', 'Không thể thêm khóa học này');
-      res.redirect('/lecturer');
-    } else {
-      fileService.uploadImage(req.file, (err, image) => {
-        if (err || !image) {
-          req.flash('error', 'Không thể thêm khóa học này');
-          return res.redirect('/lecturer');
-        }
+exports.updateSection = async (req, res) => {
+  try {
+    await Section.updateOne({ _id: req.params.sectionId }, { name: req.body.name });
+    updateCourseDate(req.params.courseId);
+    req.flash('info', 'Đã cập nhật tên chương');
+  } catch (e) {
+    req.flash('error', 'Lỗi khi cập nhật tên chương');
+  } finally {
+    res.redirect('back');
+  }
+};
 
-        Course.create(
-          {
-            name: req.body.name,
-            avatar: {
-              path: image.secure_url,
-              publicId: image.public_id,
-            },
-            category: category._id,
-            view: 0,
-            shortDescription: req.body.shortDescription,
-            description: req.body.description,
-            price: req.body.price,
-            lecturer: req.user._id,
-          },
-          (err) => {
-            if (err) {
-              console.log(err);
-              req.flash('error', 'Không thể thêm khóa học này');
-            } else {
-              req.flash('info', 'Đã thêm khóa học thành công');
-            }
-            res.redirect('/lecturer');
-          }
-        );
-      });
-    }
-  });
+exports.addNewCourse = async (req, res) => {
+  try {
+    const category = await SubCategory.findById(new mongoose.Types.ObjectId(req.body.category));
+    await Course.create({
+      name: req.body.name,
+      avatar: req.file.filename,
+      category: category._id,
+      view: 0,
+      shortDescription: req.body.shortDescription,
+      description: req.body.description,
+      price: req.body.price,
+      lecturer: req.user._id,
+    });
+    req.flash('info', 'Đã thêm khóa học thành công');
+  } catch (e) {
+    req.flash('error', 'Không thể thêm khóa học này');
+  } finally {
+    res.redirect('/lecturer');
+  }
 };
 
 exports.addNewSection = (req, res) => {
   Section.create({ name: req.body.name }, (err, section) => {
     if (err) {
       req.flash('error', 'Không thể thêm chương này');
-      return res.redirect(`/lecturer/course/${req.params.id}/sections`);
+      return res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
     }
     Course.updateOne(
-      { _id: req.params.id, lecturer: req.user._id },
+      { _id: req.params.courseId, lecturer: req.user._id },
       {
         $push: {
           sections: section._id,
@@ -128,66 +125,74 @@ exports.addNewSection = (req, res) => {
         if (err || !course) {
           req.flash('error', 'Không thể thêm chương này');
         } else {
+          updateCourseDate(req.params.courseId);
           req.flash('info', `Đã thêm chương ${section.name}`);
         }
-        res.redirect(`/lecturer/course/${req.params.id}/sections`);
+        res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
       }
     );
   });
 };
 
-exports.addNewLecture = (req, res) => {
-  function handleError() {
-    req.flash('error', 'Không thể thêm bài giảng này');
-    return res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
-  }
-  if (!req.file) {
-    handleError();
-    return;
-  }
+exports.addNewLecture = async (req, res) => {
+  try {
+    const ext = req.file.originalname.split('.').pop();
 
-  const ext = req.file.originalname.split('.').pop();
-  if (!ext) {
-    handleError();
-    return;
-  }
+    const lecture = await Lecture.create({
+      name: req.body.name,
+      video: { path: req.file.filename, extension: ext },
+    });
 
-  fileService.uploadVideo(req.file, (err, video) => {
-    if (err) {
-      console.log(err);
-      req.flash('error', 'Timeout');
-      res.redirect('back');
-      return;
-    }
-    Lecture.create(
+    await Section.updateOne(
+      { _id: req.params.sectionId },
       {
-        name: req.body.name,
-        video: { path: video.secure_url, publicId: video.public_id, extension: ext },
-      },
-      (err, lecture) => {
-        if (err) {
-          handleError();
-          return;
-        }
-        Section.updateOne(
-          { _id: req.params.sectionId },
-          {
-            $push: {
-              lectures: lecture._id,
-            },
-          },
-          (err) => {
-            if (err) {
-              req.flash('error', 'Không thể thêm bài giảng này');
-            } else {
-              req.flash('info', `Đã thêm bài giảng ${lecture.name}`);
-            }
-            res.redirect(`/lecturer/course/${req.params.courseId}/sections/${req.params.sectionId}`);
-          }
-        );
+        $push: {
+          lectures: lecture._id,
+        },
       }
     );
-  });
+    updateCourseDate(req.params.courseId);
+    req.flash('info', `Đã thêm bài giảng ${lecture.name}`);
+  } catch (e) {
+    req.flash('error', 'Không thể thêm bài giảng này');
+  } finally {
+    res.redirect('back');
+  }
+};
+
+exports.updateLecture = async (req, res) => {
+  try {
+    const updateData = req.body;
+    if (req.file) {
+      updateData.video = {
+        path: req.file.filename,
+        extension: req.file.originalname.split('.').pop(),
+      };
+    }
+
+    await Lecture.updateOne({ _id: req.params.lectureId }, updateData);
+    updateCourseDate(req.params.courseId);
+    req.flash('info', `Đã chỉnh sửa bài giảng`);
+  } catch (e) {
+    console.log(e);
+    req.flash('error', 'Không thể chỉnh sửa bài giảng này');
+  } finally {
+    res.redirect('back');
+  }
+};
+
+exports.deleteLecture = async (req, res) => {
+  try {
+    await Section.updateOne({ _id: req.params.sectionId }, { $pull: { lectures: req.params.lectureId } });
+    await Lecture.deleteOne({ _id: req.params.lectureId });
+    updateCourseDate(req.params.courseId);
+    req.flash('info', `Đã xóa bài giảng`);
+  } catch (e) {
+    console.log(e);
+    req.flash('error', 'Không thể xoá bài giảng này');
+  } finally {
+    res.redirect('back');
+  }
 };
 
 exports.updateCourse = async (req, res) => {
@@ -201,10 +206,10 @@ exports.updateCourse = async (req, res) => {
       shortDescription: req.body.shortDescription,
     };
     if (req.file) {
-      const image = await fileService.uploadImage(req.file);
-      updateData.avatar = { path: image.secure_url, publicId: image.public_id };
+      updateData.avatar = req.file.filename;
     }
-    await Course.updateOne({ _id: req.params.id, lecturer: req.user._id }, updateData);
+    await Course.updateOne({ _id: req.params.courseId, lecturer: req.user._id }, updateData);
+    updateCourseDate(req.params.courseId);
     req.flash('info', 'Chỉnh sửa khóa học thành công');
   } catch (e) {
     req.flash('error', 'Không thể chỉnh sửa khóa học này');
@@ -214,11 +219,11 @@ exports.updateCourse = async (req, res) => {
 };
 
 exports.deleteCourse = (req, res) => {
-  Course.deleteOne({ _id: req.params.id, lecturer: req.user._id }, (err) => {
+  Course.deleteOne({ _id: req.params.courseId, lecturer: req.user._id }, (err) => {
     if (err) {
       console.error(err);
       req.flash('error', 'Không thể xóa khóa học này');
-      res.redirect(`/lecturer/course/${req.params.id}`);
+      res.redirect(`/lecturer/course/${req.params.courseId}`);
     } else {
       req.flash('info', 'Xóa khóa học thành công');
       res.redirect('/lecturer');

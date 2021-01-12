@@ -18,4 +18,31 @@ router.post(
 router.post('/signup', authenticationController.signUp);
 router.post('/signout', authenticationController.signOut);
 
+//Google
+router.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+  })
+);
+router.get(
+  '/auth/google/redirect',
+  passport.authenticate('google', {
+    failureRedirect: '/signin',
+    failureFlash: 'Không thể đăng nhập với Google',
+    successRedirect: '/',
+  })
+);
+
+//Facebook
+router.get('/auth/facebook', passport.authenticate('facebook'));
+router.get(
+  '/auth/facebook/redirect',
+  passport.authenticate('facebook', {
+    failureRedirect: '/signin',
+    failureFlash: 'Không thể đăng nhập với Facebook',
+    successRedirect: '/',
+  })
+);
+
 module.exports = router;

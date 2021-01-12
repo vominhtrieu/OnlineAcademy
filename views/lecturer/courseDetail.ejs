@@ -1,24 +1,6 @@
 <%-include("../partials/header", {title: course.name, css: ["newCourse"]}) %> <%-include("../partials/navbar") %>
 <%-include("./partials/newSectionModal", {course}) %> <%-include("./partials/deleteSectionModal", {course}) %>
 
-<div class="container mt-4">
-  <% if (error.length > 0) { %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= error %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <% } if (info.length > 0) { %>
-  <div class="alert alert-primary alert-dismissible fade show" role="alert">
-    <%= info %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <% } %>
-</div>
-
 <div class="modal fade" id="delete-course-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
@@ -40,6 +22,24 @@
   </div>
 </div>
 
+<div class="container mt-4">
+  <% if (error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } if (info.length > 0) { %>
+  <div class="alert alert-primary alert-dismissible fade show" role="alert">
+    <%= info %>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <% } %>
+</div>
+
 <div class="container mt-2">
   <div class="card rounded border-0 shadow-sm">
     <div class="card-header bg-primary">
@@ -49,7 +49,7 @@
       <div class="row mb-2">
         <div class="col-12 col-md-6">
           <div class="card mb-2">
-            <img class="w-100" src="<%=course.avatar.path%>" />
+            <img class="w-100" src="/images/<%=course.avatar %>" />
           </div>
         </div>
         <div class="col-12 col-md-6">
@@ -62,55 +62,16 @@
       </div>
       <p><b>Mô tả</b><%- course.description %></p>
       <div class="w-100 d-flex">
-        <button class="btn btn-primary mr-2" data-toggle="modal" data-target="#new-section-modal">Thêm chương</button>
+        <a href="/lecturer/course/<%= course._id %>/sections" class="btn btn-primary mr-2">Nội dung khóa học</a>
         <div class="ml-auto">
           <a href="/lecturer/course/<%= course._id %>/edit" class="btn btn-primary mr-2">Chỉnh sửa</a>
           <button class="btn btn-danger mr-2" data-toggle="modal" data-target="#delete-course-modal">Xóa</button>
           <a class="btn btn-secondary" href="/lecturer">Quay lại</a>
         </div>
       </div>
-
-      <div class="w-100 shadow-sm border-0 mt-2">
-        <ul class="list-group">
-          <% course.sections.forEach((section, sectionNo) => { %>
-          <li class="list-group-item">
-            <h6 class="cursor-pointer mb-0 section-toggler">
-              <span class="h-100 position-absolute">
-                <i class="fa fa-chevron-down mr-2"></i>
-              </span>
-              <span class="pl-4 d-flex">
-                <span><%= section.name %></span>
-                <span class="ml-auto"
-                  ><span class="text-primary mr-2"><i class="fa fa-plus fa-lg"></i></span>
-                  <span class="text-dark mr-2"><i class="fa fa-edit fa-lg"></i></span>
-                  <span
-                    role="button"
-                    data-toggle="modal"
-                    data-target="#delete-section-modal"
-                    onclick="changeAction(this)"
-                    data-action="/lecturer/course/<%=course._id%>/sections/<%=section._id%>?_method=DELETE"
-                    class="text-danger"
-                  >
-                    <i class="fa fa-trash fa-lg"></i>
-                  </span>
-                </span>
-              </span>
-            </h6>
-          </li>
-          <li class="list-group-item section-content">
-            <ul class="list-unstyled">
-              <% section.lectures.forEach(lecture => { %>
-              <li class="pl-4 d-flex ml-auto">
-                <a href="#"><%= lecture.name %></a>
-              </li>
-              <% }); %>
-            </ul>
-          </li>
-          <% }); %>
-        </ul>
-      </div>
     </div>
   </div>
-</div>
 
-<%- include("../partials/footer", {scripts: ["courseSection", "courseEdit", ]}) %>
+  <script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+  <%- include("../partials/footer", {scripts: ["courseDetail", "courseSection", "courseEdit", ]}) %>
+</div>

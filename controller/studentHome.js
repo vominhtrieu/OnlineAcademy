@@ -1,24 +1,25 @@
 const Course = require('../models/Course');
+const util = require('util');
 
-exports.getHomeView = (req, res) => {
+const getFeatureCourses = util.promisify(Course.getFeatureCourses);
+const getMostViewCourses = util.promisify(Course.getMostViewCourses);
+const getNewCourses = util.promisify(Course.getNewCourses);
+
+exports.getHomeView = async (req, res) => {
   if (req.user && req.user.role === 'admin') {
     res.redirect('/admin');
   } else if (req.user && req.user.role === 'lecturer') {
     res.redirect('/lecturer');
   } else {
-    Course.getFeatureCourses(10, (err, featureCourses) => {
-      if (err) {
-        req.flash('error', 'Không thể lấy danh sách khóa học nổi bật nhất');
-        featureCourses = [];
-      }
-
-      Course.getMostViewCourses(10, (err, mostViewCourses) => {
-        if (err) {
-          req.flash('error', 'Không thể lấy danh sách khóa học được xem nhiều nhất');
-          mostViewCourses = [];
-        }
-        res.render('student/home', { featureCourses, mostViewCourses });
-      });
-    });
+    try {
+      const featureCourses = await getFeatureCourses(4);
+      const newCourses = await getNewCourses(10);
+      const mostViewCourses = await getMostViewCourses(10);
+      res.render('student/home', { featureCourses, newCourses, mostViewCourses });
+    } catch (e) {
+      console.log(e);
+      req.flash('error', 'Không thể lấy danh sách khóa học');
+      res.render('student/home', { featureCourses: [], newCourses: [], mostViewCourses: [] });
+    }
   }
 };

@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
+
 const flash = require('connect-flash');
 const expressSession = require('express-session');
 const methodOverride = require('method-override');
@@ -33,6 +36,62 @@ mongoose.connect(
 );
 
 passport.use(User.createStrategy());
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: '/auth/google/redirect',
+    },
+    async (_accessToken, _refreshToken, profile, done) => {
+      try {
+        const currentUser = await User.findOne({ email: profile.emails[0].value });
+        if (currentUser) {
+          done(null, currentUser);
+        } else {
+          const newUser = await User.create({
+            fullName: profile.displayName,
+            email: profile.emails[0].value,
+            active: true,
+            role: 'student',
+          });
+          done(null, newUser);
+        }
+      } catch (e) {
+        done(e);
+      }
+    }
+  )
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      callbackURL: '/auth/facebook/redirect',
+    },
+    async (_accessToken, _refreshToken, profile, done) => {
+      console.log(profile);
+      try {
+        const currentUser = await User.findOne({ facebookId: profile.id });
+        if (currentUser) {
+          done(null, currentUser);
+        } else {
+          const newUser = await User.create({
+            fullName: profile.displayName,
+            facebookId: profile.id,
+            active: true,
+            role: 'student',
+          });
+          done(null, newUser);
+        }
+      } catch (e) {
+        done(e);
+      }
+    }
+  )
+);
 
 app.use('/images', express.static('images'));
 app.use('/videos', express.static('videos'));
@@ -54,8 +113,13 @@ app.use(methodOverride('_method'));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function (user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function (user, done) {
+  done(null, user);
+});
 
 app.use((req, res, next) => {
   res.locals.currentUser = req.user;

@@ -11,7 +11,7 @@
       <div>
         <% courses.forEach(course => { %>
         <div class="d-flex border-bottom mb-2 py-2">
-          <img class="rounded mr-3" width="250px" src="<%=course.avatar.path%>" alt="" />
+          <img class="rounded mr-3" width="250px" src="/images/<%=course.avatar%>" alt="" />
           <div>
             <h5 class="mb-0"><a href="/courses/<%=course._id%>"><%= course.name %></a></h5>
             <p class="mb-0"><%= course.lecturer.fullName %></p>

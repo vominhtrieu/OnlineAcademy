@@ -1,5 +1,48 @@
 <%- include("../partials/header", {title: 'Các chương trong ' + course.name, css: []}) %>
 <%-include("../partials/navbar") %>
+
+<div class="modal fade" id="edit-section-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Chỉnh sửa tên chương</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="edit-form" method="POST">
+        <div class="modal-body">
+          <input class="form-control" type="text" name="name" placeholder="Tên chương" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Chỉnh sửa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="delete-section-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xoá chương</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="delete-form" method="POST">
+        <div class="modal-body">Bạn có chắc muốn xóa chương này</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-danger">Xóa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="container mt-4">
   <% if (error.length > 0) { %>
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -33,8 +76,22 @@
         <li class="list-group-item py-1 pl-3 pr-1 d-flex align-items-center">
           <a href="sections/<%=section._id%>"><%= section.name %></a>
           <div class="ml-auto">
-            <button class="btn btn-primary"><i class="fa fa-edit"></i></button>
-            <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+            <button
+              class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#edit-section-modal"
+              onclick="setActionForEditForm('<%=section._id%>', '<%= section.name %>')"
+            >
+              <i class="fa fa-edit"></i>
+            </button>
+            <button
+              class="btn btn-danger"
+              data-toggle="modal"
+              data-target="#delete-section-modal"
+              onclick="setActionForDeleteForm('<%=section._id%>')"
+            >
+              <i class="fa fa-trash"></i>
+            </button>
           </div>
         </li>
         <% }); %>
@@ -45,4 +102,5 @@
     </div>
   </div>
 </div>
-<%- include("../partials/footer") %>
+
+<%- include("../partials/footer", {scripts: ['sectionEdit']}) %>

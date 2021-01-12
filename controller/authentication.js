@@ -54,7 +54,6 @@ exports.signUp = (req, res) => {
     req.body.password,
     (err, user) => {
       if (err) {
-        console.log(err);
         req.flash('info', 'Email đã tồn tại');
         res.redirect('/signup');
       } else {

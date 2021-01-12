@@ -1,13 +1,19 @@
 const mongoose = require('mongoose');
-const fileService = require('../services/fileService');
 const { removeAccent } = require('../services/language');
+const fs = require('fs');
+const path = require('path');
 
 const schema = mongoose.Schema({
   name: String,
   nonAccentedName: String,
-  avatar: { path: String, publicId: String },
+  completed: Boolean,
+  avatar: String,
   shortDescription: String,
   description: String,
+  lastUpdate: {
+    type: Date,
+    default: Date.now,
+  },
   category: {
     type: mongoose.Types.ObjectId,
     ref: 'SubCategory',
@@ -60,12 +66,11 @@ schema.pre('save', function (next) {
 schema.pre('deleteOne', async function (next) {
   try {
     const course = await mongoose.model('Course').findOne(this._conditions);
-    const fileDestroy = fileService.destroy(course.avatar.publicId, { invalidate: true, resource_type: 'image' });
+    fs.unlinkSync(path.join(__dirname, '../images/' + course.avatar));
     const sectionsDelete = mongoose.model('Section').deleteMany({ _id: { $in: course.sections } });
     const reviewDelete = mongoose.model('Review').deleteMany({ _id: { $in: course.reviews } });
     const invoiceDelete = mongoose.model('Invoice').deleteMany({ course: course._id });
 
-    await fileDestroy;
     await sectionsDelete;
     await reviewDelete;
     await invoiceDelete;
@@ -75,6 +80,47 @@ schema.pre('deleteOne', async function (next) {
     next(err);
   }
 });
+
+schema.statics.getNewCourses = function (limit, cb) {
+  mongoose
+    .model('Course')
+    .aggregate([
+      { $sort: { lastUpdate: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'lecturer',
+          foreignField: '_id',
+          as: 'lecturer',
+        },
+      },
+      {
+        $unwind: '$lecturer',
+      },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'reviews',
+          foreignField: '_id',
+          as: 'reviews',
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          avatar: 1,
+          price: 1,
+          discount: 1,
+          lecturer: 1,
+          reviews: 1,
+          rating: { $avg: '$reviews.score' },
+          viewCount: 1,
+        },
+      },
+    ])
+    .exec(cb);
+};
 
 schema.statics.getFeatureCourses = function (limit, cb) {
   const current = new Date();
@@ -126,19 +172,9 @@ schema.statics.getFeatureCourses = function (limit, cb) {
 };
 
 schema.statics.getMostViewCourses = function (limit, cb) {
-  const query = this;
-  query.aggregate(
-    [
-      {
-        $project: {
-          name: 1,
-          avatar: 1,
-          price: 1,
-          discount: 1,
-          lecturer: 1,
-          viewCount: 1,
-        },
-      },
+  const query = mongoose.model('Course');
+  query
+    .aggregate([
       {
         $sort: {
           viewCount: -1,
@@ -147,21 +183,41 @@ schema.statics.getMostViewCourses = function (limit, cb) {
       {
         $limit: limit,
       },
-    ],
-    (err, courses) => {
-      if (err) {
-        return cb(err, courses);
-      }
-
-      query.populate(courses, 'lecturer', (err, courses) => {
-        courses.forEach((course) => {
-          course.lecturerName = course.lecturer.fullName;
-          course.lecturer = null;
-        });
-        cb(err, courses);
-      });
-    }
-  );
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'reviews',
+          foreignField: '_id',
+          as: 'reviews',
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          avatar: 1,
+          price: 1,
+          discount: 1,
+          lecturer: 1,
+          viewCount: 1,
+          reviews: 1,
+          rating: {
+            $avg: '$reviews.score',
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'lecturer',
+          foreignField: '_id',
+          as: 'lecturer',
+        },
+      },
+      {
+        $unwind: '$lecturer',
+      },
+    ])
+    .exec(cb);
 };
 
 schema.statics.getCourseDetail = function (id, cb) {
@@ -182,6 +238,9 @@ schema.statics.getCourseDetail = function (id, cb) {
       },
     })
     .exec((err, course) => {
+      if (err) {
+        return cb(err);
+      }
       let rating = 0;
       if (course.reviews.length !== 0) {
         course.reviews.forEach((review) => {

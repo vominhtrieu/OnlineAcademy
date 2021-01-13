@@ -26,7 +26,8 @@ exports.getCourseDetail = async (req, res) => {
         course.reviews = course.reviews.filter((review) => review != userReview);
       }
 
-      const isFavorite = req.user.favoriteCourses.find((course) => course.toString() === req.params.id);
+      const user = await User.findById(req.user._id);
+      const isFavorite = Boolean(user.favoriteCourses.find((course) => course.toString() === req.params.id));
 
       res.render('student/courseDetail', { course, moment, invoice, userReview, isFavorite });
     }

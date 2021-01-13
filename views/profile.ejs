@@ -1,4 +1,6 @@
-<%- include("./partials/header", {title: `${currentUser.fullName}`, css: []}) %> <%-include("./partials/navbar") %>
+<%- include("./partials/header", {title: `${currentUser.fullName}`, css: ['courseCarousel']}) %>
+<%-include("./partials/navbar") %>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 
 <div class="container mt-4">
   <% if (error.length > 0) { %>
@@ -17,24 +19,122 @@
   </div>
   <% } %>
   <div class="row">
-      <div class="col-3">
-        <img src="" alt="">
-      </div>
-      <div class="col-9">
-          <div class="card">
-              <div class="card-header">
-                  <h5><%= currentUser.fullName%></h5>
+    <div class="col-3">
+      <img src="" alt="" />
+    </div>
+    <div class="col-9">
+      <div class="card">
+        <div class="card-header">
+          <h5><%= currentUser.fullName%></h5>
+        </div>
+        <div class="card-body">
+          <p><b>Họ tên:</b> <%=currentUser.fullName %></p>
+          <p><b>Email:</b> <%=currentUser.email %></p>
+          <% if (userCourses && userCourses.length > 0) { %>
+          <p class="font-weight-bold">Khóa học của bạn</p>
+          <div class="course-carousel row px-3">
+            <div class="swiper-container h-100">
+              <div class="swiper-wrapper">
+                <% userCourses.forEach(course => { %>
+                <div class="swiper-slide mb-1">
+                  <img class="rounded mb-1" src="/images/<%= course.avatar %>" alt="<%= course.name %>" />
+
+                  <a href="/courses/<%=course._id%>">
+                    <h6 class="card-title"><%= course.name %></h6>
+                  </a>
+                  <h6 class="card-subtitle mb-1 font-weight-light"><%= course.lecturer.fullName %></h6>
+                  <h6 class="mb-1"><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
+                  <% if (course.rating > 0) { %>
+                  <span class="font-weight-bold"><%= course.rating %></span><% for (let i = 1; i <= 5; i++) { %> <% if
+                  (i <= course.rating) { %>
+                  <span class="fa fa-star checked"></span>
+                  <% } else { %>
+                  <span class="fa fa-star"></span>
+                  <% }} %>
+                  <span>(<%=course.reviews.length%>)</span>
+                  <% } else { %>
+                  <p class="mb-0">Chưa có người đánh giá</p>
+                  <% } %>
+                </div>
+                <% }); %>
               </div>
-              <div class="card-body">
-                  <p><b>Họ tên:</b> <%=currentUser.fullName %></p>
-                  <p><b>Email:</b> <%=currentUser.email %></p>
-                  <p class="font-weight-bold">Khóa học của bạn</p>
-                  <p class="font-weight-bold">Khóa học yêu thích</p>
-              </div>
+
+              <div class="swiper-button-next"></div>
+              <div class="swiper-button-prev"></div>
+            </div>
           </div>
+
+          <% } %> <% if (favoriteCourses && favoriteCourses.length > 0) { %>
+          <p class="font-weight-bold mt-4">Khóa học yêu thích</p>
+          <div class="course-carousel row px-3">
+            <div class="swiper-container h-100">
+              <div class="swiper-wrapper">
+                <% favoriteCourses.forEach(course => { %>
+                <div class="swiper-slide mb-1">
+                  <form method="POST" action="/profile/unfavorite" style="position: absolute; right: 0; top: 0">
+                    <input type="text" class="d-none" name="courseId" value="<%=course._id%>" />
+                    <button class="btn btn-danger">
+                      <i class="fa fa-heart"></i>
+                    </button>
+                  </form>
+                  <img class="rounded mb-1" src="/images/<%= course.avatar %>" alt="<%= course.name %>" />
+
+                  <a href="/courses/<%=course._id%>">
+                    <h6 class="card-title"><%= course.name %></h6>
+                  </a>
+                  <h6 class="card-subtitle mb-1 font-weight-light"><%= course.lecturer.fullName %></h6>
+                  <h6><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
+                  <span class="font-weight-bold"><%= course.rating %></span>
+                  <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
+                  <span class="fa fa-star checked"></span>
+                  <% } else { %>
+                  <span class="fa fa-star"></span>
+                  <% }} %>
+                  <span>(<%=course.reviews.length%>)</span>
+                  <% } else { %>
+                  <p class="mb-0">Chưa có người đánh giá</p>
+                  <% } %>
+                </div>
+                <% }); %>
+              </div>
+              <div class="swiper-button-next"></div>
+              <div class="swiper-button-prev"></div>
+            </div>
+            <% } %>
+          </div>
+        </div>
       </div>
-  </div>
+    </div>
   </div>
 </div>
+
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  var swiper = new Swiper('.swiper-container', {
+    slidesPerView: 1,
+    spaceBetween: 10,
+    slidesPerGroup: 1,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+      720: {
+        slidesPerView: 2,
+        spaceBetween: 5,
+        slidesPerGroup: 2,
+      },
+      960: {
+        slidesPerView: 3,
+        spaceBetween: 10,
+        slidesPerGroup: 3,
+      },
+    },
+  });
+</script>
 
 <%- include("./partials/footer") %>

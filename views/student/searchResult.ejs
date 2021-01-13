@@ -59,9 +59,17 @@
             <div class="d-flex border-bottom mb-2 py-2">
               <img class="rounded mr-3" height="150" src="/images/<%=course.avatar%>" alt="" />
               <div>
-                <h5 class="mb-0"><a href="/courses/<%=course._id%>"><%= course.name %></a></h5>
+                <h5 class="mb-0">
+                  <a href="/courses/<%=course._id%>"><%= course.name %></a>
+                  <% if (course.isNew) { %>
+                  <span class="badge badge-primary">Mới</span>
+                  <% } %> <% if (course.isBestSeller) { %>
+                  <span class="badge badge-warning">Bán chạy</span>
+                  <% } %>
+                </h5>
+
                 <p class="mb-0"><%= course.lecturer.fullName %></p>
-                <h6><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
+                <h6 class="mb-0"><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
                 <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
                 <span class="fa fa-star checked"></span>
                 <% } else { %>

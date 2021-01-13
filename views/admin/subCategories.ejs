@@ -104,15 +104,13 @@
       <span class="col-3 text-nowrap overflow-hidden text-center font-weight-bold">Thao tác</span>
     </div>
 
-    <% category.subCategories.forEach((category, index)=> { %>
+    <% subCategories.forEach(({category, courseCount}, index)=> { %>
     <div id="<%=category._id%>" class="d-flex row py-2 border-bottom ml-0 w-100">
       <span class="col-1 text-center d-flex align-items-center justify-content-center"><%= index + 1 %></span>
       <span class="col-sm-6 col-5 d-flex align-items-center">
-        <a href="/admin/categories/<%=category._id%>"><%= category.name %></a></span
+        <a href="/categories/<%=category._id%>"><%= category.name %></a></span
       >
-      <span class="col-2 text-center d-flex align-items-center justify-content-center"
-        ><%= category.courses.length %></span
-      >
+      <span class="col-2 text-center d-flex align-items-center justify-content-center"><%= courseCount %></span>
       <span class="action-container" class="col-sm-3 col-4 text-center">
         <button
           class="btn btn-success"

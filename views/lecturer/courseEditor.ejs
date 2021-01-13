@@ -72,12 +72,9 @@
                 required
               />
 
-              <textarea
-                name="shortDescription"
-                value="<%= course.shortDescription %>"
-                class="form-control"
-                placeholder="Mô tả ngắn"
-              ></textarea>
+              <textarea name="shortDescription" class="form-control" placeholder="Mô tả ngắn">
+<%= course.shortDescription %></textarea
+              >
             </div>
           </div>
         </div>
@@ -104,7 +101,7 @@
     selector: '#description',
     menubar: false,
     toolbar:
-      'undo redo | bold italic underline | fontsizeselect | alignleft aligncenter alignright alignjustify | outdent indent',
+      'undo redo | bold italic underline | fontselect | fontsizeselect | alignleft aligncenter alignright alignjustify | outdent indent',
     plugins: 'advlist link image lists',
     resize: false,
     height: 400,
@@ -153,7 +150,7 @@
 
   const fileInput = document.getElementById('file-input');
   const imageSelector = document.getElementById('image-selector');
-  let avatar = '<%=course.avatar.path %>';
+  let avatar = '<%=course.avatar %>';
 
   if (avatar) {
     imageSelector.style.backgroundImage = `url("/images/${avatar}")`;

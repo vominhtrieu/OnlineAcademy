@@ -261,68 +261,80 @@ schema.statics.getMultipleCourseDetail = function (condition, skip, limit, sort,
     sortOption = { rating: -1 };
   }
 
-  mongoose
-    .model('Course')
-    .aggregate([
-      { $match: condition },
-      {
-        $lookup: {
-          from: 'reviews',
-          localField: 'reviews',
-          foreignField: '_id',
-          as: 'reviews',
+  const current = new Date();
+  current.setDate(current.getDate() - 7);
+
+  mongoose.model('Course').getFeatureCourses(10, (err, featureCourses) => {
+    if (err) {
+      return cb(err);
+    }
+    featureCourses = featureCourses.map((course) => course._id);
+
+    mongoose
+      .model('Course')
+      .aggregate([
+        { $match: condition },
+        {
+          $lookup: {
+            from: 'reviews',
+            localField: 'reviews',
+            foreignField: '_id',
+            as: 'reviews',
+          },
         },
-      },
-      {
-        $project: {
-          name: 1,
-          avatar: 1,
-          reviews: 1,
-          lecturer: 1,
-          sections: 1,
-          price: 1,
-          category: 1,
-          studentCount: 1,
-          rating: { $avg: '$reviews.score' },
+        {
+          $project: {
+            name: 1,
+            avatar: 1,
+            reviews: 1,
+            lecturer: 1,
+            sections: 1,
+            price: 1,
+            category: 1,
+            studentCount: 1,
+            rating: { $avg: '$reviews.score' },
+            isBestSeller: { $in: ['$_id', featureCourses] },
+            isNew: { $gt: ['$lastUpdate', current] },
+          },
         },
-      },
-      {
-        $sort: sortOption,
-      },
-      {
-        $skip: skip,
-      },
-      {
-        $limit: limit,
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'lecturer',
-          foreignField: '_id',
-          as: 'lecturer',
+        {
+          $sort: sortOption,
         },
-      },
-      {
-        $unwind: {
-          path: '$lecturer',
+        {
+          $skip: skip,
         },
-      },
-      {
-        $lookup: {
-          from: 'sections',
-          localField: 'sections',
-          foreignField: '_id',
-          as: 'sections',
+        {
+          $limit: limit,
         },
-      },
-    ])
-    .exec((err, courses) => {
-      if (err) {
-        console.log(err);
-      }
-      cb(err, courses);
-    });
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'lecturer',
+            foreignField: '_id',
+            as: 'lecturer',
+          },
+        },
+        {
+          $unwind: {
+            path: '$lecturer',
+          },
+        },
+        {
+          $lookup: {
+            from: 'sections',
+            localField: 'sections',
+            foreignField: '_id',
+            as: 'sections',
+          },
+        },
+      ])
+      .exec((err, courses) => {
+        if (err) {
+          console.log(err);
+        }
+        cb(err, courses);
+      });
+  });
 };
 
 schema.statics.getLecture = function (courseId, sectionNo, lectureNo, cb) {

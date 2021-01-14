@@ -13,7 +13,7 @@ const schema = mongoose.Schema({
 
 schema.index({ name: 'text' });
 
-schema.statics.getMostEnrolledCategory = function (limit, cb) {
+schema.statics.getMostEnrolledCategories = function (limit, cb) {
   const current = new Date();
   current.setDate(current.getDate() - 7);
   mongoose
@@ -21,8 +21,6 @@ schema.statics.getMostEnrolledCategory = function (limit, cb) {
     .aggregate([
       { $match: { date: { $gte: current } } },
       { $group: { _id: '$course', count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: limit },
       {
         $lookup: {
           from: 'courses',
@@ -32,33 +30,33 @@ schema.statics.getMostEnrolledCategory = function (limit, cb) {
         },
       },
       {
-        $unwind: { path: '$course' },
+        $unwind: '$course',
       },
       {
-        $lookup: {
-          from: 'users',
-          localField: 'course.lecturer',
-          foreignField: '_id',
-          as: 'course.lecturer',
+        $group: { _id: '$course.category', count: { $sum: '$count' } },
+      },
+      {
+        $sort: {
+          count: -1,
         },
       },
       {
-        $unwind: { path: '$course.lecturer' },
+        $limit: 4,
       },
       {
         $lookup: {
-          from: 'reviews',
-          localField: 'course.reviews',
+          from: 'subcategories',
+          localField: '_id',
           foreignField: '_id',
-          as: 'course.reviews',
+          as: 'category',
         },
       },
       {
-        $unwind: { path: '$course.reviews', preserveNullAndEmptyArrays: true },
+        $unwind: '$category',
       },
     ])
-    .exec((err, courses) => {
-      cb(err, courses);
+    .exec((err, categories) => {
+      cb(err, categories);
     });
 };
 

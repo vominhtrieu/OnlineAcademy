@@ -8,13 +8,16 @@ const Record = require('../models/Record');
 
 moment.locale('vi');
 const getCourseDetail = util.promisify(Course.getCourseDetail);
+const getRelatedCourses = util.promisify(Course.getRelatedCourses);
 
 exports.getCourseDetail = async (req, res) => {
   try {
     await Course.updateOne({ _id: req.params.id }, { $inc: { viewCount: 1 } });
     const course = await getCourseDetail(new mongoose.Types.ObjectId(req.params.id));
+    const relatedCourses = await getRelatedCourses(course, 5);
+
     if (!req.user) {
-      res.render('student/courseDetail', { course, moment });
+      res.render('student/courseDetail', { course, moment, relatedCourses });
     } else {
       const invoice = await Invoice.findOne({
         user: req.user._id,
@@ -29,10 +32,16 @@ exports.getCourseDetail = async (req, res) => {
       const user = await User.findById(req.user._id);
       const isFavorite = Boolean(user.favoriteCourses.find((course) => course.toString() === req.params.id));
 
-      res.render('student/courseDetail', { course, moment, invoice, userReview, isFavorite });
+      res.render('student/courseDetail', {
+        course,
+        moment,
+        invoice,
+        userReview,
+        isFavorite,
+        relatedCourses,
+      });
     }
   } catch (e) {
-    console.log(e);
     req.flash('error', 'Không tìm thấy khóa học');
     res.redirect('/');
   }

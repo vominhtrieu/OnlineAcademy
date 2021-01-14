@@ -13,8 +13,17 @@
       <ul class="list-unstyled">
         <% section.lectures.forEach(lecture => { %>
         <li class="pl-4">
-          <% if (lecture.preview) { %>
-          <a href="#"><%= lecture.name %> - xem thử</a>
+          <% if (section.preview) { %>
+          <button
+            href="#"
+            class="btn btn-link preview-toggler p-0"
+            data-toggle="modal"
+            data-target="#preview-video-modal"
+            data-video="/videos/<%= lecture.video.path%>"
+            data-extension="<%=lecture.video.extension%>"
+          >
+            <%= lecture.name %> - xem thử
+          </button>
           <% } else { %> <%= lecture.name %> <% }}); %>
         </li>
       </ul>

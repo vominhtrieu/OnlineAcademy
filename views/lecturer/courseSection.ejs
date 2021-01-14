@@ -82,13 +82,17 @@
   <% } %>
 
   <div class="card">
-    <div class="card-header bg-primary d-flex align-items-center py-1">
-      <h5 class="text-white m-0">Chỉnh sửa nội dung chương <%= section.name %></h5>
-      <span class="ml-auto">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#lecture-modal">
-          <i class="fa fa-plus fa-lg"></i>
-        </button>
-      </span>
+    <div class="card-header bg-primary py-1">
+      <h5 class="text-white m-0 d-flex align-items-center">
+        <a href="/lecturer/course/<%=courseId%>/sections" class="btn btn-primary text-white mr-2"
+          ><i class="fa fa-chevron-left fa-lg"></i></a
+        >Chỉnh sửa nội dung chương <%= section.name %>
+        <span class="ml-auto">
+          <button class="btn btn-primary" data-toggle="modal" data-target="#lecture-modal">
+            <i class="fa fa-plus fa-lg"></i>
+          </button>
+        </span>
+      </h5>
     </div>
     <ul class="list-group border-0">
       <% section.lectures.forEach(lecture => { %>

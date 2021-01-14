@@ -6,6 +6,7 @@ exports.getProfile = async (req, res) => {
   const user = await User.findById(req.user._id)
     .populate({ path: 'favoriteCourses', populate: { path: 'lecturer reviews' } })
     .exec();
+  res.locals.currentUser = user;
   const favoriteCourses = user.favoriteCourses;
   const invoices = await Invoice.find({ user: req.user._id })
     .populate({ path: 'course', populate: { path: 'lecturer reviews' } })
@@ -29,8 +30,14 @@ exports.getProfile = async (req, res) => {
   res.render('profile', { favoriteCourses, userCourses });
 };
 
-exports.getEditProfileView = (_req, res) => {
-  res.render('editProfile');
+exports.getEditProfileView = async (req, res) => {
+  try {
+    res.locals.currentUser = await User.findById(req.user._id);
+    res.render('editProfile');
+  } catch (e) {
+    req.flash('Không thể lấy thông tin cá nhân');
+    res.redirect('home');
+  }
 };
 
 exports.updateProfile = async (req, res) => {
@@ -40,6 +47,7 @@ exports.updateProfile = async (req, res) => {
       {
         fullName: req.body.fullName,
         email: req.body.email,
+        description: req.body.description,
       }
     );
     req.flash('info', 'Cập nhật thông tin thành công');

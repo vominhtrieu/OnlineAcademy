@@ -31,7 +31,7 @@
         <th class="text-center">Giá</th>
         <th class="text-center">Giảm giá</th>
         <th class="text-center">Học viên</th>
-        <th class="text-center">Doanh thu</th>
+        <th class="text-center">Tình trạng</th>
         <th class="text-center">Đánh giá</th>
       </tr>
       <% courses.forEach(course => { %>
@@ -41,8 +41,8 @@
         <td class="text-center"><%= course.price %> VNĐ</td>
         <td class="text-center"><%= course.discount %>%</td>
         <td class="text-center"><%= course.studentCount %></td>
-        <td class="text-center">0</td>
-        <td class="text-center">0</td>
+        <td class="text-center"><%= course.completed? 'Đã hoàn thành' : 'Chưa hoàn thành'%></td>
+        <td class="text-center"><%= course.rating ? course.rating : 'Chưa có' %></td>
       </tr>
       <% }); %>
     </table>

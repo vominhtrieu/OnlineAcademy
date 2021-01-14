@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const schema = mongoose.Schema({
   name: String,
+  preview: Boolean,
   lectures: [
     {
       type: mongoose.Types.ObjectId,

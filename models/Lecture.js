@@ -8,10 +8,6 @@ const schema = mongoose.Schema({
     path: String,
     extension: String,
   },
-  preview: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 schema.pre('deleteOne', async function (next) {

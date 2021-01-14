@@ -14,6 +14,7 @@ router.get('/:courseId', checkIsLecturer, flashInfo, controller.getCourseDetailV
 router.post('/', checkIsLecturer, uploadImage.single('avatar'), controller.addNewCourse);
 router.get('/:courseId/edit', checkIsLecturer, flashInfo, controller.getCourseEditorView);
 router.put('/:courseId', checkIsLecturer, uploadImage.single('avatar'), controller.updateCourse);
+router.put('/:courseId/complete', checkIsLecturer, controller.toggleComplete);
 router.delete('/:courseId', checkIsLecturer, controller.deleteCourse);
 
 //Section

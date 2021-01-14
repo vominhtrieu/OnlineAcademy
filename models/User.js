@@ -10,6 +10,7 @@ const schema = new mongoose.Schema({
   password: String,
   fullName: String,
   role: String,
+  description: String,
   active: {
     type: Boolean,
     default: false,

@@ -30,6 +30,19 @@
       <span class="carousel-control-next-icon"></span>
     </a>
   </div>
+  <h5 class="mt-4">Lĩnh vực đăng ký nhiều nhất</h5>
+  <div class="row">
+    <% mostEnrolledCategories.forEach(({category, count}) => { %>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h6><%= category.name %></h6>
+          <p><b><%=count%></b> người đăng ký trong tuần</p>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
   <h5 class="mt-4">Khóa học mới nhất</h5>
   <%- include('./partials/coursesCarousel', {courses: newCourses}) %>
   <h5 class="mt-4">Khóa học được xem nhiều nhất</h5>

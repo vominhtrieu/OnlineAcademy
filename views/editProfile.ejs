@@ -30,6 +30,7 @@
                   <form action="/profile?_method=PUT" method="POST">
                     <input class="form-control mb-2" type="text" name="fullName" placeholder="Họ tên" value="<%=currentUser.fullName %>"/>
                     <input class="form-control mb-2" type="text" name="email" placeholder="Email" value="<%=currentUser.email %>"/>
+                    <textarea class="form-control mb-2" name="description" placeholder="Mô tả bản thân"><%=currentUser.description %></textarea>
                     <div class="w-100 d-flex">
                       <button class="ml-auto btn btn-primary">Lưu thay đổi</button>
                     </div>

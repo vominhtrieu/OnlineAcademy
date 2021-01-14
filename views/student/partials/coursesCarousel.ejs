@@ -9,7 +9,16 @@
           <h5 class="card-title"><%= course.name %></h5>
         </a>
         <h6 class="card-subtitle mb-1 font-weight-light"><%= course.lecturer.fullName %></h6>
+        <% if (course.discount === 0) { %>
         <h6><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
+        <% } else { %>
+        <h6>
+          <span><%=new Intl.NumberFormat('de-DE').format(course.price * (100 - course.discount) / 100)%> đ</span>
+          <span class="font-weight-light text-decoration-line-through"
+            ><%=new Intl.NumberFormat('de-DE').format(course.price) %> đ</span
+          >
+        </h6>
+        <% } %>
         <span class="font-weight-bold"><%= course.rating %></span>
         <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
         <span class="fa fa-star checked"></span>

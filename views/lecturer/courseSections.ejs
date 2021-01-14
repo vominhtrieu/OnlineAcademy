@@ -1,11 +1,37 @@
 <%- include("../partials/header", {title: 'Các chương trong ' + course.name, css: []}) %>
 <%-include("../partials/navbar") %>
 
+<div class="modal fade" id="new-section-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thêm chương</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="/lecturer/course/<%=course._id%>/sections" method="POST">
+        <div class="modal-body">
+          <input class="form-control" type="text" name="name" placeholder="Tên chương" />
+          <div class="form-check mt-2">
+            <input class="form-check-input" type="checkbox" name="preview" id="new-section-preview" />
+            <label class="form-check-label" for="new-section-preview">Xem trước</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary">Thêm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="edit-section-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Chỉnh sửa tên chương</h5>
+        <h5 class="modal-title">Chỉnh sửa chương</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -13,6 +39,10 @@
       <form id="edit-form" method="POST">
         <div class="modal-body">
           <input class="form-control" type="text" name="name" placeholder="Tên chương" />
+          <div class="form-check mt-2">
+            <input type="checkbox" name="preview" class="form-check-input" id="edit-preview" />
+            <label class="form-check-label" for="edit-preview">Xem trước</label>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -61,16 +91,20 @@
   <% } %>
 
   <div class="card">
-    <div class="card-header bg-primary">
-      <h5 class="text-white m-0">Chỉnh sửa nội dung khóa <%= course.name %></h5>
+    <div class="card-header bg-primary py-1">
+      <h5 class="text-white m-0 d-flex align-items-center">
+        <a href="/lecturer/course/<%=course._id%>" class="btn btn-primary text-white mr-2"
+          ><i class="fa fa-chevron-left fa-lg"></i
+        ></a>
+        Chỉnh sửa nội dung khóa <%= course.name %>
+        <span class="ml-auto">
+          <button class="btn btn-primary" data-target="#new-section-modal" data-toggle="modal">
+            <i class="fa fa-plus fa-lg"></i>
+          </button>
+        </span>
+      </h5>
     </div>
     <div class="card-body">
-      <form action="/lecturer/course/<%=course._id%>/sections" method="POST">
-        <div class="d-flex">
-          <input class="form-control mr-2" name="name" type="text" placeholder="Tên chương mới" required />
-          <button class="btn btn-primary" type="submit">Thêm</button>
-        </div>
-      </form>
       <ul class="list-group mt-3">
         <% course.sections.forEach(section => { %>
         <li class="list-group-item py-1 pl-3 pr-1 d-flex align-items-center">
@@ -80,7 +114,7 @@
               class="btn btn-primary"
               data-toggle="modal"
               data-target="#edit-section-modal"
-              onclick="setActionForEditForm('<%=section._id%>', '<%= section.name %>')"
+              onclick="setActionForEditForm('<%=section._id%>', '<%= section.name %>', <%= Boolean(section.preview) %>)"
             >
               <i class="fa fa-edit"></i>
             </button>
@@ -96,9 +130,13 @@
         </li>
         <% }); %>
       </ul>
-      <button class="btn btn-primary mt-2 ml-auto d-flex align-items-center">
-        <i class="fa fa-check pr-2"></i>Đánh dấu hoàn thành
-      </button>
+      <form method="POST" action="/lecturer/course/<%=course._id%>/complete?_method=PUT">
+        <button class="btn btn-primary mt-2 ml-auto d-flex align-items-center">
+          <% if (!course.completed) { %>
+          <i class="fa fa-check pr-2"></i>Đánh dấu hoàn thành <% } else { %> <i class="fa fa-close pr-2"></i>Đánh dấu
+          chưa hoàn thành <% } %>
+        </button>
+      </form>
     </div>
   </div>
 </div>

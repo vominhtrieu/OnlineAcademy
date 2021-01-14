@@ -70,17 +70,48 @@ exports.getSectionView = (req, res) => {
         req.flash('error', `Không tìm thấy chương với id là ${req.params.courseId}`);
         res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
       } else {
-        res.render('lecturer/courseSection', { section });
+        res.render('lecturer/courseSection', { section, courseId: req.params.courseId });
       }
     });
 };
 
+exports.addNewSection = (req, res) => {
+  Section.create({ name: req.body.name, preview: req.body.preview }, (err, section) => {
+    if (err) {
+      req.flash('error', 'Không thể thêm chương này');
+      return res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
+    }
+    Course.updateOne(
+      { _id: req.params.courseId, lecturer: req.user._id },
+      {
+        $push: {
+          sections: section._id,
+        },
+      },
+      (err, course) => {
+        if (err || !course) {
+          req.flash('error', 'Không thể thêm chương này');
+        } else {
+          updateCourseDate(req.params.courseId);
+          req.flash('info', `Đã thêm chương ${section.name}`);
+        }
+        res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
+      }
+    );
+  });
+};
+
 exports.updateSection = async (req, res) => {
   try {
-    await Section.updateOne({ _id: req.params.sectionId }, { name: req.body.name });
+    console.log(req.body.preview);
+    await Section.updateOne(
+      { _id: req.params.sectionId },
+      { name: req.body.name, preview: req.body.preview === 'true' }
+    );
     updateCourseDate(req.params.courseId);
-    req.flash('info', 'Đã cập nhật tên chương');
+    req.flash('info', 'Đã cập nhật chương');
   } catch (e) {
+    console.log(e);
     req.flash('error', 'Lỗi khi cập nhật tên chương');
   } finally {
     res.redirect('back');
@@ -106,32 +137,6 @@ exports.addNewCourse = async (req, res) => {
   } finally {
     res.redirect('/lecturer');
   }
-};
-
-exports.addNewSection = (req, res) => {
-  Section.create({ name: req.body.name }, (err, section) => {
-    if (err) {
-      req.flash('error', 'Không thể thêm chương này');
-      return res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
-    }
-    Course.updateOne(
-      { _id: req.params.courseId, lecturer: req.user._id },
-      {
-        $push: {
-          sections: section._id,
-        },
-      },
-      (err, course) => {
-        if (err || !course) {
-          req.flash('error', 'Không thể thêm chương này');
-        } else {
-          updateCourseDate(req.params.courseId);
-          req.flash('info', `Đã thêm chương ${section.name}`);
-        }
-        res.redirect(`/lecturer/course/${req.params.courseId}/sections`);
-      }
-    );
-  });
 };
 
 exports.addNewLecture = async (req, res) => {
@@ -216,6 +221,26 @@ exports.updateCourse = async (req, res) => {
   } finally {
     res.redirect('back');
   }
+};
+
+exports.toggleComplete = async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.courseId);
+
+    await Course.updateOne({ _id: req.params.courseId, lecturer: req.user._id }, { completed: !course.completed });
+    updateCourseDate(req.params.courseId);
+    req.flash('info', 'Đã cập nhật tình trạng khóa học');
+    res.redirect('back');
+  } catch (e) {
+    console.log(e);
+    req.flash('info', 'Không thể cập nhật tình trạng khóa học');
+    res.redirect('back');
+  }
+};
+
+exports.togglePreview = async (req, res) => {
+  try {
+  } catch (e) {}
 };
 
 exports.deleteCourse = (req, res) => {

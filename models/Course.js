@@ -10,6 +10,10 @@ const schema = mongoose.Schema({
   avatar: String,
   shortDescription: String,
   description: String,
+  complete: {
+    type: Boolean,
+    default: false,
+  },
   lastUpdate: {
     type: Date,
     default: Date.now,
@@ -76,7 +80,6 @@ schema.pre('deleteOne', async function (next) {
     await invoiceDelete;
     next();
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
@@ -114,6 +117,7 @@ schema.statics.getNewCourses = function (limit, cb) {
           discount: 1,
           lecturer: 1,
           reviews: 1,
+          completed: 1,
           rating: { $avg: '$reviews.score' },
           viewCount: 1,
         },
@@ -171,6 +175,65 @@ schema.statics.getFeatureCourses = function (limit, cb) {
     });
 };
 
+schema.statics.getRelatedCourses = function (course, limit, cb) {
+  const current = new Date();
+  current.setDate(current.getDate() - 7);
+  mongoose
+    .model('Invoice')
+    .aggregate([
+      { $match: { date: { $gte: current } } },
+      { $group: { _id: '$course', count: { $sum: 1 } } },
+      {
+        $lookup: {
+          from: 'courses',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'course',
+        },
+      },
+      {
+        $unwind: { path: '$course' },
+      },
+      { $match: { 'course.category': course.category, _id: { $ne: course._id } } },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'course.lecturer',
+          foreignField: '_id',
+          as: 'course.lecturer',
+        },
+      },
+      {
+        $unwind: { path: '$course.lecturer' },
+      },
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: 'course.reviews',
+          foreignField: '_id',
+          as: 'course.reviews',
+        },
+      },
+    ])
+    .exec((err, courses) => {
+      courses = courses.map(({ course }) => {
+        if (!course.reviews || course.reviews.length === 0) course.rating = 0;
+        else {
+          let sum = 0;
+          course.reviews.forEach((review) => {
+            sum += review.score;
+          });
+          course.rating = sum / course.reviews.length;
+        }
+
+        return course;
+      });
+      cb(err, courses);
+    });
+};
+
 schema.statics.getMostViewCourses = function (limit, cb) {
   const query = mongoose.model('Course');
   query
@@ -200,6 +263,7 @@ schema.statics.getMostViewCourses = function (limit, cb) {
           lecturer: 1,
           viewCount: 1,
           reviews: 1,
+          completed: 1,
           rating: {
             $avg: '$reviews.score',
           },
@@ -289,7 +353,9 @@ schema.statics.getMultipleCourseDetail = function (condition, skip, limit, sort,
             reviews: 1,
             lecturer: 1,
             sections: 1,
+            completed: 1,
             price: 1,
+            discount: 1,
             category: 1,
             studentCount: 1,
             rating: { $avg: '$reviews.score' },

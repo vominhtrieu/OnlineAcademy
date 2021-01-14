@@ -49,3 +49,7 @@ textarea.form-control {
 .course-carousel-item {
   width: 300px;
 }
+
+.text-decoration-line-through {
+  text-decoration: line-through;
+}

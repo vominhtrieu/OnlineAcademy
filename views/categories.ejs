@@ -15,8 +15,16 @@
           <div>
             <h5 class="mb-0"><a href="/courses/<%=course._id%>"><%= course.name %></a></h5>
             <p class="mb-0"><%= course.lecturer.fullName %></p>
+            <% if (course.discount === 0) { %>
             <h6><%=new Intl.NumberFormat('de-DE').format(course.price)%> đ</h6>
-            <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
+            <% } else { %>
+            <h6>
+              <span><%=new Intl.NumberFormat('de-DE').format(course.price * (100 - course.discount) / 100)%> đ</span>
+              <span class="font-weight-light text-decoration-line-through"
+                ><%=new Intl.NumberFormat('de-DE').format(course.price) %> đ</span
+              >
+            </h6>
+            <% } %> <% if (course.rating > 0) { %> <% for (let i = 1; i <= 5; i++) { %> <% if (i <= course.rating) { %>
             <span class="fa fa-star checked"></span>
             <% } else { %>
             <span class="fa fa-star"></span>

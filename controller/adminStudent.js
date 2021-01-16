@@ -31,3 +31,25 @@ exports.deleteStudent = async (req, res) => {
     res.redirect('/admin/students');
   }
 };
+
+exports.lockStudent = async (req, res) => {
+  try {
+    await User.updateOne({ _id: req.params.id }, { locked: true });
+    req.flash('info', 'Đã khóa tài khoản giảng viên này');
+  } catch (e) {
+    req.flash('error', 'Không thể khóa tài khoản giảng viên này');
+  } finally {
+    res.redirect('back');
+  }
+};
+
+exports.unlockStudent = async (req, res) => {
+  try {
+    await User.updateOne({ _id: req.params.id }, { locked: false });
+    req.flash('info', 'Đã mở khóa tài khoản giảng viên này');
+  } catch (e) {
+    req.flash('error', 'Không thể mở khóa tài khoản giảng viên này');
+  } finally {
+    res.redirect('back');
+  }
+};

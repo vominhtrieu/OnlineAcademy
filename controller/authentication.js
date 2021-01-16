@@ -30,6 +30,10 @@ exports.signIn = (req, res) => {
   if (!req.user.active) {
     res.redirect('/need-active');
   } else {
+    if (req.user.locked) {
+      req.flash('error', 'Tài khoản đã bị khóa');
+      return res.redirect('/signin');
+    }
     res.locals.currentUser = req.user;
     switch (req.user.role) {
       case 'student':

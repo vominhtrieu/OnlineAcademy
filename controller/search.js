@@ -12,7 +12,7 @@ exports.getResult = async (req, res) => {
     const page = req.query.page ? +req.query.page : 0;
 
     let categories;
-    let searchCondition = { $text: { $search: req.query.q } };
+    let searchCondition = { $text: { $search: req.query.q }, disabled: false };
     if (Array.isArray(req.query.categories)) {
       categories = req.query.categories.map((category) => new mongoose.Types.ObjectId(category));
     } else if (req.query.categories) categories = [new mongoose.Types.ObjectId(req.query.categories)];

@@ -7,6 +7,10 @@ const schema = mongoose.Schema({
   name: String,
   nonAccentedName: String,
   completed: Boolean,
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   avatar: String,
   shortDescription: String,
   description: String,
@@ -88,6 +92,11 @@ schema.statics.getNewCourses = function (limit, cb) {
   mongoose
     .model('Course')
     .aggregate([
+      {
+        $match: {
+          disabled: false,
+        },
+      },
       { $sort: { lastUpdate: -1 } },
       { $limit: limit },
       {
@@ -148,6 +157,11 @@ schema.statics.getFeatureCourses = function (limit, cb) {
         $unwind: { path: '$course' },
       },
       {
+        $match: {
+          'course.disabled': false,
+        },
+      },
+      {
         $lookup: {
           from: 'users',
           localField: 'course.lecturer',
@@ -194,7 +208,7 @@ schema.statics.getRelatedCourses = function (course, limit, cb) {
       {
         $unwind: { path: '$course' },
       },
-      { $match: { 'course.category': course.category, _id: { $ne: course._id } } },
+      { $match: { 'course.category': course.category, _id: { $ne: course._id }, 'course.disabled': false } },
       { $sort: { count: -1 } },
       { $limit: limit },
       {
@@ -238,6 +252,11 @@ schema.statics.getMostViewCourses = function (limit, cb) {
   const query = mongoose.model('Course');
   query
     .aggregate([
+      {
+        $match: {
+          disabled: false,
+        },
+      },
       {
         $sort: {
           viewCount: -1,

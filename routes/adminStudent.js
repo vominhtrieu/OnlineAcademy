@@ -6,6 +6,7 @@ const controller = require('../controller/adminStudent');
 
 router.get('/', checkIsAdmin, flashInfo, controller.getStudentList);
 router.put('/:id', checkIsAdmin, controller.updateStudent);
-router.delete('/:id', checkIsAdmin, controller.deleteStudent);
+router.put('/:id/lock', checkIsAdmin, controller.lockStudent);
+router.put('/:id/unlock', checkIsAdmin, controller.unlockStudent);
 
 module.exports = router;

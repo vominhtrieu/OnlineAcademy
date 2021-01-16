@@ -61,12 +61,23 @@ exports.updateLecturer = async (req, res) => {
   }
 };
 
-exports.deleteLecturer = async (req, res) => {
+exports.lockLecturer = async (req, res) => {
   try {
-    await User.deleteOne({ _id: req.params.id });
-    req.flash('info', 'Đã xóa giảng viên này');
+    await User.updateOne({ _id: req.params.id }, { locked: true });
+    req.flash('info', 'Đã khóa tài khoản giảng viên này');
   } catch (e) {
-    req.flash('error', 'Không thể xóa giảng viên này');
+    req.flash('error', 'Không thể khóa tài khoản giảng viên này');
+  } finally {
+    res.redirect('/admin/lecturer');
+  }
+};
+
+exports.unlockLecturer = async (req, res) => {
+  try {
+    await User.updateOne({ _id: req.params.id }, { locked: false });
+    req.flash('info', 'Đã mở khóa tài khoản giảng viên này');
+  } catch (e) {
+    req.flash('error', 'Không thể mở khóa tài khoản giảng viên này');
   } finally {
     res.redirect('/admin/lecturer');
   }

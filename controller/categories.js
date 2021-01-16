@@ -10,9 +10,9 @@ exports.getCoursesInCategory = async (req, res) => {
   try {
     const page = req.query.page ? +req.query.page : 0;
     const category = await SubCategory.findById(req.params.id);
-    const waitForLength = Course.find({ category: req.params.id });
+    const waitForLength = Course.find({ category: req.params.id, disabled: false });
     const waitForDetailCourse = getMultipleCourseDetail(
-      { category: new mongoose.Types.ObjectId(req.params.id) },
+      { category: new mongoose.Types.ObjectId(req.params.id), disabled: false },
       page * LIMIT,
       LIMIT,
       'rating'

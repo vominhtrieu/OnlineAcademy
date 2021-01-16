@@ -14,8 +14,8 @@ exports.getHomeView = async (req, res) => {
     res.redirect('/lecturer');
   } else {
     try {
-      const mostEnrolledCategories = await getMostEnrolledCategories(4);
-      const featureCourses = await getFeatureCourses(4);
+      const mostEnrolledCategories = await getMostEnrolledCategories(5);
+      const featureCourses = await getFeatureCourses(3);
       const newCourses = await getNewCourses(10);
       const mostViewCourses = await getMostViewCourses(10);
       res.render('student/home', { mostEnrolledCategories, featureCourses, newCourses, mostViewCourses });

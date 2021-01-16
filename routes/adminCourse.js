@@ -5,6 +5,7 @@ const flashInfo = require('../middlewares/flashInfo');
 const controller = require('../controller/adminCourse');
 
 router.get('/', checkIsAdmin, flashInfo, controller.getCourseList);
-router.delete('/:id', checkIsAdmin, controller.deleteCourse);
+router.put('/:id/disable', checkIsAdmin, controller.disableCourse);
+router.put('/:id/enable', checkIsAdmin, controller.enableCourse);
 
 module.exports = router;

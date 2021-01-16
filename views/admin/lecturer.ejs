@@ -46,11 +46,11 @@
   </div>
 </div>
 
-<div class="modal fade" id="delete-lecturer-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="lock-lecturer-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <!-- Action is set via javascript -->
-      <form id="deleteForm" method="POST">
+      <form id="lockForm" method="POST">
         <div class="modal-header">
           <h5 class="modal-title">Xác nhận xóa</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -126,11 +126,15 @@
         <button
           class="btn btn-danger"
           data-toggle="modal"
-          data-target="#delete-lecturer-modal"
+          data-target="#lock-lecturer-modal"
           data-user-id="<%= user._id %>"
-          onclick="setActionForDeleteForm(this)"
+          onclick="setActionForLockForm(this, <%= Boolean(user.locked) %>)"
         >
-          <span class="fas fa-trash"></span>
+          <% if (user.locked) { %>
+          <span class="fas fa-lock"></span>
+          <% } else { %>
+          <span class="fas fa-unlock"></span>
+          <% } %>
         </button>
       </span>
     </div>
@@ -140,10 +144,19 @@
 
 <script>
   const editForm = document.getElementById('editForm');
-  const deleteForm = document.getElementById('deleteForm');
+  const lockFormHeader = document.querySelector('#lockForm .modal-header h5');
+  const lockFormBody = document.querySelector('#lockForm .modal-body');
 
-  function setActionForDeleteForm(button) {
-    deleteForm.action = `/admin/lecturer/${button.dataset.userId}?_method=DELETE`;
+  function setActionForLockForm(button, locked) {
+    if (locked) {
+      lockForm.action = `/admin/lecturer/${button.dataset.userId}/unlock?_method=PUT`;
+      lockFormHeader.textContent = 'Xác nhận mở khóa';
+      lockFormBody.textContent = 'Bạn có chắc muốn mở khóa cho giảng viên này';
+    } else {
+      lockForm.action = `/admin/lecturer/${button.dataset.userId}/lock?_method=PUT`;
+      lockFormHeader.textContent = 'Xác nhận khóa';
+      lockFormBody.textContent = 'Bạn có chắc muốn khóa tài khoản giảng viên này';
+    }
   }
 
   function setActionForEditForm(button, fullName, email) {

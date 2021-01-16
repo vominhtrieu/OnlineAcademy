@@ -11,6 +11,10 @@ const schema = new mongoose.Schema({
   fullName: String,
   role: String,
   description: String,
+  locked: {
+    type: Boolean,
+    default: false,
+  },
   active: {
     type: Boolean,
     default: false,

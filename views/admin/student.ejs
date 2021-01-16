@@ -23,18 +23,18 @@
   </div>
 </div>
 
-<div class="modal fade" id="delete-student-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="lock-student-modal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <!-- Action is set via javascript -->
-      <form id="deleteForm" method="POST">
+      <form id="lockForm" method="POST">
         <div class="modal-header">
           <h5 class="modal-title">Xác nhận xóa</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">Bạn có chắc muốn xóa lĩnh vực này</div>
+        <div class="modal-body"></div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
           <button type="submit" class="btn btn-danger">Xác nhận</button>
@@ -96,18 +96,22 @@
           data-toggle="modal"
           data-target="#edit-lecturer-modal"
           data-user-id="<%= user._id %>"
-          onclick="setActionForEditForm(this, '<%= user.fullName %>', '<%= user.email %>')"
+          onclick="setActionForLockForm(this, '<%= user.fullName %>', '<%= user.email %>')"
         >
           <span class="fas fa-edit"></span>
         </button>
         <button
           class="btn btn-danger"
           data-toggle="modal"
-          data-target="#delete-student-modal"
+          data-target="#lock-student-modal"
           data-user-id="<%= user._id %>"
-          onclick="setActionForDeleteForm(this)"
+          onclick="setActionForLockForm(this, <%= Boolean(user.locked) %>)"
         >
-          <span class="fas fa-trash"></span>
+          <% if (user.locked) { %>
+          <span class="fas fa-lock"></span>
+          <% } else { %>
+          <span class="fas fa-unlock"></span>
+          <% } %>
         </button>
       </span>
     </div>
@@ -117,10 +121,20 @@
 
 <script>
   const editForm = document.getElementById('editForm');
-  const deleteForm = document.getElementById('deleteForm');
+  const lockForm = document.getElementById('lockForm');
+  const lockFormHeader = document.querySelector('#lockForm .modal-header h5');
+  const lockFormBody = document.querySelector('#lockForm .modal-body');
 
-  function setActionForDeleteForm(button) {
-    deleteForm.action = `/admin/students/${button.dataset.userId}?_method=DELETE`;
+  function setActionForLockForm(button, locked) {
+    if (locked) {
+      lockForm.action = `/admin/students/${button.dataset.userId}/unlock?_method=PUT`;
+      lockFormHeader.textContent = 'Xác nhận mở khóa';
+      lockFormBody.textContent = 'Bạn có chắc muốn mở khóa cho học sinh này';
+    } else {
+      lockForm.action = `/admin/students/${button.dataset.userId}/lock?_method=PUT`;
+      lockFormHeader.textContent = 'Xác nhận khóa';
+      lockFormBody.textContent = 'Bạn có chắc muốn khóa tài khoản học sinh này';
+    }
   }
 
   function setActionForEditForm(button, fullName, email) {

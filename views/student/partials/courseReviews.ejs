@@ -18,7 +18,7 @@
         type="button"
         data-toggle="modal"
         data-target="#reviewModal"
-        onclick="setActionReviewFrom('/courses/<%=course._id%>/review/<%=userReview._id%>?_method=PUT', <%= userReview.score %>, '<%= userReview.message %>')"
+        onclick="setActionReviewForm('/courses/<%=course._id%>/review/<%=userReview._id%>?_method=PUT', <%= userReview.score %>, '<%= userReview.message %>')"
       >
         Chỉnh sửa
       </button>

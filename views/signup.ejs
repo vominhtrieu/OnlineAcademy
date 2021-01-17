@@ -29,11 +29,19 @@
               </button>
             </div>
             <% } %>
-            <form id="sign-up-form" class="form-group mt-4" method="POST" action="/signup">
+            <form
+              id="sign-up-form"
+              class="form-group mt-4"
+              method="POST"
+              action="/signup"
+              onsubmit="return validateForm()"
+            >
+              <span id="email-validate" class="text-danger"></span>
               <div class="input-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                 </div>
+
                 <input
                   type="text"
                   name="email"
@@ -41,6 +49,7 @@
                   placeholder="Email"
                   class="form-control"
                   aria-describedby="helpId"
+                  required
                 />
               </div>
 
@@ -55,6 +64,7 @@
                   placeholder="Họ và tên"
                   class="form-control"
                   aria-describedby="helpId"
+                  required
                 />
               </div>
 
@@ -69,20 +79,25 @@
                   placeholder="Mật khẩu"
                   class="form-control"
                   aria-describedby="helpId"
+                  required
                 />
               </div>
 
-              <div class="input-group my-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fa fa-lock"></i></span>
+              <div class="my-3">
+                <span id="password-validate" class="text-danger"></span>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                  </div>
+                  <input
+                    type="password"
+                    id="retype-password"
+                    placeholder="Nhập lại mật khẩu"
+                    class="form-control"
+                    aria-describedby="helpId"
+                    required
+                  />
                 </div>
-                <input
-                  type="password"
-                  id="retype-password"
-                  placeholder="Nhập lại mật khẩu"
-                  class="form-control"
-                  aria-describedby="helpId"
-                />
               </div>
 
               <button id="submit-btn" class="btn btn-primary mt-2">Đăng ký</button>
@@ -111,4 +126,4 @@
   </div>
 </div>
 
-<%- include("partials/footer") %>
+<%- include("partials/footer", {scripts: ["signUp"]}) %>

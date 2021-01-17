@@ -166,11 +166,11 @@
           <p class="mb-0">Cập nhật lần cuối vào <%= moment(course.lastUpdate).fromNow() %></p>
           <p class="mb-0"><%= course.studentCount %> người học - <%= course.viewCount %> lượt xem</p>
           <p></p>
-          <% if (!locals.invoice) { %>
+          <% if (!locals.invoice && currentUser.role === "student") { %>
           <button class="btn btn-primary mt-2" type="button" data-toggle="modal" data-target="#courseModal">
             Ghi danh
           </button>
-          <% } else { %>
+          <% } else if(locals.invoice) { %>
           <div class="d-flex mt-2">
             <a href="/courses/<%=course._id%>/learn" class="btn btn-primary mr-1">Vào học</a>
             <% if (!isFavorite) { %>

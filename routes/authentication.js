@@ -6,6 +6,7 @@ const authenticationController = require('../controller/authentication');
 
 router.get('/signin', flashInfo, authenticationController.getSignInView);
 router.get('/signup', flashInfo, authenticationController.getSignUpView);
+router.get('/verify-email', authenticationController.verifyEmail);
 
 router.post(
   '/signin',

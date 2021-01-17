@@ -90,3 +90,18 @@ exports.signOut = (req, res) => {
   req.flash('info', 'Successful signed out');
   res.redirect('/signin');
 };
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.query.email });
+
+    if (user !== null) {
+      res.json(false);
+    } else {
+      res.json(true);
+    }
+  } catch (e) {
+    console.log(e);
+    res.json(false);
+  }
+};

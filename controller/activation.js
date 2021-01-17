@@ -7,20 +7,16 @@ exports.activeAccount = (req, res) => {
     if (err) {
       res.redirect('/');
     } else {
-      User.updateOne(
-        { _id: new mongoose.Types.ObjectId(key.user) },
-        { active: true },
-        (err, document) => {
-          if (err) {
-            res.redirect('/');
-          } else {
-            ActiveKey.findByIdAndDelete(document._id, (err) => {
-              if (err) res.send('Lỗi server');
-              else res.send('Đã kích hoạt tài khoản');
-            });
-          }
+      User.updateOne({ _id: new mongoose.Types.ObjectId(key.user) }, { active: true }, (err, document) => {
+        if (err) {
+          res.redirect('/');
+        } else {
+          ActiveKey.findByIdAndDelete(document._id, (err) => {
+            if (err) res.send('Lỗi server');
+            else res.render('activeComplete');
+          });
         }
-      );
+      });
     }
   });
 };

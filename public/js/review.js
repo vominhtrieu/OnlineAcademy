@@ -21,8 +21,9 @@ stars.hover(function () {
 
 function setActionReviewForm(action, score, message) {
   reviewForm.attr('action', action);
-  if (score) scoreInput.val(+score);
-  else scoreInput.val(5);
+  score = +score || 5;
+  scoreInput.val(score);
+
   if (message) reviewForm.get(0).message.value = message;
   for (let i = 0; i < 5; i++) {
     stars.eq(i).removeClass('checked');

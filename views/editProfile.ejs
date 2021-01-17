@@ -17,38 +17,70 @@
   </div>
   <% } %>
   <div class="row">
-      <div class="col-3">
-        <img src="" alt="">
+    <div class="col-md-3 col-12 position-relative text-center">
+      <% if (currentUser.avatar) { %>
+      <img
+        class="w-100 rounded-circle shadow-sm"
+        src="/images/<%=currentUser.avatar%>"
+        alt="<%= currentUser.fullName%>'s avatar"
+      />
+      <% } else { %>
+      <img
+        class="w-100 rounded-circle shadow-sm"
+        src="/assets/userAvatar.png"
+        alt="<%= currentUser.fullName%>'s avatar"
+      />
+      <% } %>
+      <form id="avatarForm" method="POST" action="/avatar?_method=PUT" class="d-none" enctype="multipart/form-data">
+        <input id="avatarInput" type="file" name="avatar" accept="image/*" />
+      </form>
+      <button id="avatarButton" class="btn btn-primary mt-3">
+        <i class="fa fa-camera mx-auto"></i>
+        Đổi avatar
+      </button>
+    </div>
+    <div class="col-md-9 col-12">
+      <div class="card">
+        <div class="card-header bg-primary py-2 text-white">
+          <h5 class="mb-0">Chỉnh sửa thông tin cá nhấn</h5>
+        </div>
+        <div class="card-body">
+          <h6>Chỉnh thông tin cơ bản</h6>
+          <form action="/profile?_method=PUT" method="POST">
+            <input
+              class="form-control mb-2"
+              type="text"
+              name="fullName"
+              placeholder="Họ tên"
+              value="<%=currentUser.fullName %>"
+            />
+            <input
+              class="form-control mb-2"
+              type="text"
+              name="email"
+              placeholder="Email"
+              value="<%=currentUser.email %>"
+            />
+            <textarea class="form-control mb-2" name="description" placeholder="Mô tả bản thân">
+<%=currentUser.description %></textarea
+            >
+            <div class="w-100 d-flex">
+              <button class="ml-auto btn btn-primary">Lưu thay đổi</button>
+            </div>
+          </form>
+          <h6>Thay đổi mật khẩu</h6>
+          <form action="/profile/password?_method=PUT" method="POST">
+            <input class="form-control mb-2" type="password" name="oldPassword" placeholder="Nhập mật khẩu hiện tại" />
+            <input class="form-control mb-2" type="password" name="newPassword" placeholder="Nhập mật khẩu mới" />
+            <input class="form-control mb-2" type="password" placeholder="Nhập lại mật khẩu mới" />
+            <div class="w-100 d-flex">
+              <button class="ml-auto btn btn-primary">Lưu thay đổi</button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="col-9">
-          <div class="card">
-              <div class="card-header bg-primary py-2 text-white">
-                  <h5 class="mb-0">Chỉnh sửa thông tin cá nhấn</h5>
-              </div>
-              <div class="card-body">
-                <h6>Chỉnh thông tin cơ bản</h6>
-                  <form action="/profile?_method=PUT" method="POST">
-                    <input class="form-control mb-2" type="text" name="fullName" placeholder="Họ tên" value="<%=currentUser.fullName %>"/>
-                    <input class="form-control mb-2" type="text" name="email" placeholder="Email" value="<%=currentUser.email %>"/>
-                    <textarea class="form-control mb-2" name="description" placeholder="Mô tả bản thân"><%=currentUser.description %></textarea>
-                    <div class="w-100 d-flex">
-                      <button class="ml-auto btn btn-primary">Lưu thay đổi</button>
-                    </div>
-                  </form>
-                  <h6>Thay đổi mật khẩu</h6>
-                  <form action="/profile/password?_method=PUT" method="POST">
-                    <input class="form-control mb-2" type="password" name="oldPassword" placeholder="Nhập mật khẩu hiện tại">
-                    <input class="form-control mb-2" type="password" name="newPassword" placeholder="Nhập mật khẩu mới">
-                    <input class="form-control mb-2" type="password" placeholder="Nhập lại mật khẩu mới">
-                    <div class="w-100 d-flex">
-                      <button class="ml-auto btn btn-primary">Lưu thay đổi</button>
-                    </div>
-                  </form>
-              </div>
-          </div>
-      </div>
-  </div>
+    </div>
   </div>
 </div>
 
-<%- include("./partials/footer") %>
+<%- include("./partials/footer", { scripts: ['avatarUpdate'] }) %>

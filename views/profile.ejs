@@ -4,10 +4,23 @@
 
 <div class="container mt-4">
   <div class="row">
-    <div class="col-3">
-      <img src="" alt="" />
+    <div class="col-md-3 col-12 position-relative text-center">
+      <% if (currentUser.avatar) { %>
+      <img
+        class="w-100 rounded-circle shadow-sm"
+        src="/images/<%=currentUser.avatar%>"
+        alt="<%= currentUser.fullName%>'s avatar"
+      />
+      <% } else { %>
+      <img
+        class="w-100 rounded-circle shadow-sm"
+        src="/assets/userAvatar.png"
+        alt="<%= currentUser.fullName%>'s avatar"
+      />
+      <% } %>
     </div>
-    <div class="col-9">
+
+    <div class="col-md-9 col-12">
       <div class="card">
         <div class="card-header bg-primary text-white">
           <h5 class="mb-0">Trang cá nhân</h5>
@@ -107,32 +120,4 @@
 </div>
 
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-<script>
-  var swiper = new Swiper('.swiper-container', {
-    slidesPerView: 1,
-    spaceBetween: 10,
-    slidesPerGroup: 1,
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    breakpoints: {
-      720: {
-        slidesPerView: 2,
-        spaceBetween: 5,
-        slidesPerGroup: 2,
-      },
-      960: {
-        slidesPerView: 3,
-        spaceBetween: 10,
-        slidesPerGroup: 3,
-      },
-    },
-  });
-</script>
-
-<%- include("./partials/footer") %>
+<%- include("./partials/footer", {scripts: ['profile', 'avatarUpdate']}) %>

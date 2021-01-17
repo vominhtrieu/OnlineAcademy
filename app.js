@@ -149,6 +149,7 @@ app.use('/admin/courses', require('./routes/adminCourse'));
 app.use('/lecturer', require('./routes/lecturerDashboard'));
 app.use('/lecturer/course', require('./routes/lecturerCourse'));
 app.use('/about', require('./routes/about'));
+app.use('/avatar', require('./routes/userAvatar'));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

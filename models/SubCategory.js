@@ -1,17 +1,21 @@
 const mongoose = require('mongoose');
+const language = require('../services/language');
 
 const schema = mongoose.Schema({
   name: String,
+  nonAccentedName: String,
   image: String,
-  courses: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: 'Course',
-    },
-  ],
 });
 
-schema.index({ name: 'text' });
+schema.pre('save', function () {
+  this.nonAccentedName = language.removeAccent(this.name);
+});
+
+schema.pre('updateOne', function () {
+  this._update.nonAccentedName = language.removeAccent(this._update.name);
+});
+
+schema.index({ nonAccentedName: 'text' });
 
 schema.statics.getMostEnrolledCategories = function (limit, cb) {
   const current = new Date();
@@ -41,7 +45,7 @@ schema.statics.getMostEnrolledCategories = function (limit, cb) {
         },
       },
       {
-        $limit: 4,
+        $limit: limit,
       },
       {
         $lookup: {

@@ -163,7 +163,6 @@ exports.getLecture = async (req, res) => {
       record: record.lectures.find((item) => lecture._id.toString() === item.lecture.toString()),
     });
   } catch (e) {
-    console.log(e);
     req.flash('error', 'Không thể tải nội dung khóa học');
     res.redirect('back');
   }

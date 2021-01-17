@@ -208,7 +208,7 @@ schema.statics.getRelatedCourses = function (course, limit, cb) {
       {
         $unwind: { path: '$course' },
       },
-      { $match: { 'course.category': course.category, _id: { $ne: course._id }, 'course.disabled': false } },
+      { $match: { 'course.category': course.category._id, _id: { $ne: course._id }, 'course.disabled': false } },
       { $sort: { count: -1 } },
       { $limit: limit },
       {
@@ -320,6 +320,7 @@ schema.statics.getCourseDetail = function (id, cb) {
         path: 'writer',
       },
     })
+    .populate('category')
     .exec((err, course) => {
       if (err) {
         return cb(err);
@@ -402,6 +403,19 @@ schema.statics.getMultipleCourseDetail = function (condition, skip, limit, sort,
         {
           $unwind: {
             path: '$lecturer',
+          },
+        },
+        {
+          $lookup: {
+            from: 'subcategories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category',
+          },
+        },
+        {
+          $unwind: {
+            path: '$category',
           },
         },
         {

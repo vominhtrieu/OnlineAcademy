@@ -2,7 +2,7 @@ const Course = require('../models/Course');
 const mongoose = require('mongoose');
 const util = require('util');
 const SubCategory = require('../models/SubCategory');
-const LIMIT = 1;
+const LIMIT = 5;
 
 const getMultipleCourseDetail = util.promisify(Course.getMultipleCourseDetail);
 

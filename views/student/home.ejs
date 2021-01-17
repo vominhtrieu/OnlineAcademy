@@ -36,7 +36,7 @@
   <div class="row">
     <% mostEnrolledCategories.forEach(({category, count}) => { %>
     <div class="col">
-      <div class="card">
+      <div class="card h-100">
         <div class="card-body">
           <a href="/categories/<%= category._id %>"><h6><%= category.name %></h6></a>
           <p><b><%=count%></b> người đăng ký trong tuần</p>

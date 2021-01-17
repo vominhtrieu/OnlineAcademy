@@ -133,12 +133,18 @@
         </div>
         <div class="col-md-6 col-12">
           <h2><%= course.name %></h2>
+
           <% if (course.completed) { %>
           <p class="badge badge-primary mb-0">Đã hoàn thành</p>
           <% } else { %>
           <p class="badge badge-danger mb-0">Chưa hoàn thành</p>
           <% } %>
-          <h5 class="mb-0"><%= course.lecturer.fullName %></h5>
+          <h5 class="mb-1">
+            <a class="text-black font-weight-bold" href="/categories/<%=course.category._id%>"
+              ><%= course.category.name %></a
+            >
+          </h5>
+          <h5 class="mb-1"><span class="font-weight-normal">Đăng bởi</span> <%= course.lecturer.fullName %></h5>
           <p class="mb-1"><%= course.shortDescription %></p>
 
           <% if (course.rating > 0) { %>
@@ -166,7 +172,7 @@
           <p class="mb-0">Cập nhật lần cuối vào <%= moment(course.lastUpdate).fromNow() %></p>
           <p class="mb-0"><%= course.studentCount %> người học - <%= course.viewCount %> lượt xem</p>
           <p></p>
-          <% if (!locals.invoice && currentUser.role === "student") { %>
+          <% if (currentUser && !locals.invoice && currentUser.role === "student") { %>
           <button class="btn btn-primary mt-2" type="button" data-toggle="modal" data-target="#courseModal">
             Ghi danh
           </button>

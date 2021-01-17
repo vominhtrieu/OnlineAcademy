@@ -179,7 +179,6 @@ exports.updateLecture = async (req, res) => {
     updateCourseDate(req.params.courseId);
     req.flash('info', `Đã chỉnh sửa bài giảng`);
   } catch (e) {
-    console.log(e);
     req.flash('error', 'Không thể chỉnh sửa bài giảng này');
   } finally {
     res.redirect('back');
@@ -219,7 +218,7 @@ exports.updateCourse = async (req, res) => {
   } catch (e) {
     req.flash('error', 'Không thể chỉnh sửa khóa học này');
   } finally {
-    res.redirect('back');
+    res.redirect(`/lecturer/course/${req.params.courseId}`);
   }
 };
 
@@ -236,11 +235,6 @@ exports.toggleComplete = async (req, res) => {
     req.flash('info', 'Không thể cập nhật tình trạng khóa học');
     res.redirect('back');
   }
-};
-
-exports.togglePreview = async (req, res) => {
-  try {
-  } catch (e) {}
 };
 
 exports.deleteCourse = (req, res) => {

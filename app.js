@@ -72,7 +72,6 @@ passport.use(
       callbackURL: '/auth/facebook/redirect',
     },
     async (_accessToken, _refreshToken, profile, done) => {
-      console.log(profile);
       try {
         const currentUser = await User.findOne({ facebookId: profile.id });
         if (currentUser) {

@@ -1,4 +1,14 @@
-<h6><%=lecturer.fullName%></h6>
-<span class="mt-2"><b>Email:</b> <%=lecturer.email%></span>
-
-<p><b>Giới thiệu bản thân:</b><br /><%= lecturer.description %></p>
+<div class="row">
+  <div class="col-3">
+    <% if (lecturer.avatar) { %>
+    <img class="w-100 avatar rounded" src="/images/<%= lecturer.avatar %>" alt="" />
+    <% } else { %>
+    <img class="w-100 avatar rounded" src="/assets/userAvatar.png" alt="" />
+    <% } %>
+  </div>
+  <div class="col-9">
+    <h6><%=lecturer.fullName%></h6>
+    <span class="mt-2"><b>Email:</b> <%=lecturer.email%></span>
+    <p><b>Giới thiệu bản thân:</b><br /><%= lecturer.description %></p>
+  </div>
+</div>

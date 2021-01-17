@@ -1,9 +1,19 @@
 const Course = require('../models/Course');
+const User = require('../models/User');
 
 exports.getCourseList = async (req, res) => {
   try {
-    const courses = await Course.find({}).populate('lecturer').exec();
-    res.render('admin/courses', { courses });
+    const lecturers = await User.find({ role: 'lecturer' });
+    const condition = {};
+    if (req.query.lecturer && req.query.lecturer !== '') {
+      condition.lecturer = req.query.lecturer;
+    }
+
+    if (req.query.category && req.query.category !== '') {
+      condition.category = req.query.category;
+    }
+    const courses = await Course.find(condition).populate('lecturer').exec();
+    res.render('admin/courses', { courses, lecturers });
   } catch (e) {
     req.flash('error', 'Không thể lấy danh sách khóa học');
     res.redirect('back');
